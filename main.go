@@ -24,20 +24,9 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "home.html")
 }
 
-func main() {
-	environment := flag.String("e", "development", "run project with mode [-e development|production]")
-	flag.Usage = func() {
-		fmt.Println("Usage: [appname] -e development|production")
-		os.Exit(1)
-	}
-	flag.Parse()
-
-	log.Printf("============== environment: %s", *environment)
-	config.Init(*environment)
-
+func startWSServer() {
 	c := config.GetConfig()
 
-	//flag.Parse()
 	hub := newHub()
 	go hub.run()
 	http.HandleFunc("/", serveHome)
@@ -51,6 +40,25 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+}
+
+func main() {
+	environment := flag.String("e", "development", "run project with mode [-e development|production]")
+	flag.Usage = func() {
+		fmt.Println("Usage: [appname] -e development|production")
+		os.Exit(1)
+	}
+	flag.Parse()
+
+	log.Printf("============== environment: %s", *environment)
+	config.Init(*environment)
+
+	// Start WSServer.
+	//startWSServer()
+
+	// New WSServer
+	wss := newWSServer("ntc")
+	log.Printf("======= WSServer[%s] is running...", wss.name)
 }
 
 // func main() {
