@@ -7,9 +7,26 @@ import (
 	"net/http"
 	"ntc-gwss/conf"
 	"os"
+	"strings"
 )
 
-var addr = flag.String("addr", ":8080", "http service address")
+var addr = flag.String("addr", "localhost:8080", "http service address")
+
+//// Declare Global
+var mapSymbol = make(map[string]string)
+var typeTime = map[string]string{
+	"1m":  "1m",
+	"5m":  "5m",
+	"15m": "15m",
+	"30m": "30m",
+	"1h":  "1h",
+	"2h":  "2h",
+	"4h":  "4h",
+	"6h":  "6h",
+	"12h": "12h",
+	"1d":  "1d",
+	"1w":  "1w",
+}
 
 func serveHome(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.URL)
@@ -42,8 +59,52 @@ func startWSServer() {
 	}
 }
 
+func initMapSymbol() {
+	c := config.GetConfig()
+	listpair := c.GetString("market.listpair")
+	log.Printf("=========== listpair: %s", listpair)
+
+	//var listpair = "ETH_BTC;KNOW_BTC;KNOW_ETH"
+	var arrSymbol = strings.Split(listpair, ";")
+	// log.Printf("arrSymbol: ", arrSymbol)
+	for i := range arrSymbol {
+		symbol := arrSymbol[i]
+		mapSymbol[symbol] = symbol
+	}
+	log.Printf("=========== mapSymbol: ", mapSymbol)
+}
+
+func reloadMapSymbol(listpair string) {
+	log.Printf("=========== reloadMapSymbol.listpair: %s", listpair)
+	if listpair != "" {
+		var arrSymbol = strings.Split(listpair, ";")
+		// log.Printf("arrSymbol: ", arrSymbol)
+		for i := range arrSymbol {
+			symbol := arrSymbol[i]
+			//// If not exist, add to mapSymbol
+			if _, ok := mapSymbol[symbol]; !ok {
+				mapSymbol[symbol] = symbol
+			}
+		}
+		log.Printf("=========== reloadMapSymbol.mapSymbol: ", mapSymbol)
+	}
+}
+
 func main() {
-	environment := flag.String("e", "development", "run project with mode [-e development|production]")
+	// TCF{
+	// 	Try: func() {
+	// 		fmt.Println("I tried")
+	// 		Throw("Oh,...sh...")
+	// 	},
+	// 	Catch: func(e Exception) {
+	// 		fmt.Printf("Caught %v\n", e)
+	// 	},
+	// 	Finally: func() {
+	// 		fmt.Println("Finally...")
+	// 	},
+	// }.Do()
+
+	environment := flag.String("e", "development", "run project with mode [-e development | test | production]")
 	flag.Usage = func() {
 		fmt.Println("Usage: [appname] -e development|production")
 		os.Exit(1)
@@ -53,12 +114,24 @@ func main() {
 	log.Printf("============== environment: %s", *environment)
 	config.Init(*environment)
 
-	// Start WSServer.
+	//// initMapSymbol
+	initMapSymbol()
+
+	//// test reloadMapSymbol
+	// reloadMapSymbol("ETH_BTC;KNOW_BTC;KNOW_ETH")
+	// log.Printf("=========== mapSymbol 2: ", mapSymbol)
+
+	//// Start WSServer.
 	//startWSServer()
 
-	// New WSServer
-	wss := newWSServer("ntc")
-	log.Printf("======= WSServer[%s] is running...", wss.name)
+	//// New WSServer
+	// wss := newWSServer("ntc")
+	// log.Printf("======= WSServer[%s] is running...", wss.name)
+
+	//// New DPWSServer
+	dpwss := newDPWSServer("depthprice")
+	log.Printf("======= DPWSServer[%s] is ready...", dpwss.name)
+	dpwss.start()
 }
 
 // func main() {

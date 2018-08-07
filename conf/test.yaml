@@ -1,0 +1,5 @@
+ntc:
+  wss:
+    host: 0.0.0.0
+    port: 8080
+market.listpair: ETH_BTC;GTO_BTC;TRX_BTC

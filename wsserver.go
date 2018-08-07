@@ -33,6 +33,9 @@ func newWSServer(name string) *WSServer {
 	rt.HandleFunc("/ws/v1/dp/{symbol}", func(w http.ResponseWriter, r *http.Request) {
 		pathURI := r.RequestURI
 		log.Printf("=======pathURI: %s", pathURI)
+		vars := mux.Vars(r)
+		symbol := vars["symbol"]
+		log.Printf("=======symbol: %s", symbol)
 
 		serveWs(hub, w, r)
 	})
