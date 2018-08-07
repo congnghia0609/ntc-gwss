@@ -1,2 +1,2 @@
 # ntc-gwss
-ntc-gwss is code example websocket server by library gorilla
+ntc-gwss is golang code example websocket server using library gorilla
