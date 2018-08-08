@@ -1,4 +1,4 @@
-package main
+package wss
 
 import (
 	"log"
@@ -14,21 +14,30 @@ type WSServer struct {
 	hub  *Hub
 }
 
-func newWSServer(name string) *WSServer {
+func serveHome(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL)
+	if r.URL.Path != "/" {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	http.ServeFile(w, r, "view/home.html")
+}
+
+func NewWSServer(name string) *WSServer {
 	c := config.GetConfig()
 
 	hub := newHub()
 	go hub.run()
-	rt := mux.NewRouter()
-	// http.HandleFunc("/", serveHome)
-	// http.HandleFunc("/ws/v1/dp/:symbol", func(w http.ResponseWriter, r *http.Request) {
-	// 	pathAddr := r.RemoteAddr
-	// 	log.Printf("=======pathAddr: %s", pathAddr)
-	// 	pathURI := r.RequestURI
-	// 	log.Printf("=======pathURI: %s", pathURI)
 
-	// 	serveWs(hub, w, r)
-	// })
+	// NewServeMux
+	httpsm := http.NewServeMux()
+
+	// Setup Handlers.
+	rt := mux.NewRouter()
 	rt.HandleFunc("/", serveHome)
 	rt.HandleFunc("/ws/v1/dp/{symbol}", func(w http.ResponseWriter, r *http.Request) {
 		pathURI := r.RequestURI
@@ -39,10 +48,10 @@ func newWSServer(name string) *WSServer {
 
 		serveWs(hub, w, r)
 	})
-	http.Handle("/", rt)
+	httpsm.Handle("/", rt)
 
 	address := c.GetString(name+".wss.host") + ":" + c.GetString(name+".wss.port")
-	err := http.ListenAndServe(address, nil)
+	err := http.ListenAndServe(address, httpsm)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}

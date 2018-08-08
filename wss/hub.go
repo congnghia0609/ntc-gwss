@@ -1,4 +1,4 @@
-package main
+package wss
 
 // Hub maintain the set of active clients and broadcasts message to the client.
 type Hub struct {

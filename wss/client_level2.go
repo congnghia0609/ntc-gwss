@@ -1,45 +1,26 @@
-package main
+package wss
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
+	"ntc-gwss/util"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-// const (
-// 	// Time allowed to write a message to the peer.
-// 	writeWait = 10 * time.Second
-
-// 	// Time allowed to read the next pong message from the peer.
-// 	pongWait = 60 * time.Second
-
-// 	// Send pings to peer with this period. Must be less than pongWait.
-// 	pingPeriod = (pongWait * 9) / 10
-
-// 	// Maximum message size allowed from peer.
-// 	maxMessageSize = 512
-// )
-
-// var (
-// 	newline = []byte{'\n'}
-// 	space   = []byte{' '}
-// )
-
-// var upgrader = websocket.Upgrader{
-// 	ReadBufferSize:  1024,
-// 	WriteBufferSize: 1024,
-// }
-
-// ClientLevel1 is a middleman between the websocket connection and the hub.
-type ClientLevel1 struct {
+// ClientLevel2 is a middleman between the websocket connection and the hub.
+type ClientLevel2 struct {
 	// symbol
 	symbol string
 
-	// HubLevel1
-	hub *HubLevel1
+	// typeTime
+	typeTime string
+
+	// HubLevel2
+	hub *HubLevel2
 
 	// The websocket connnection.
 	conn *websocket.Conn
@@ -52,7 +33,7 @@ type ClientLevel1 struct {
 //
 // The application runs readPump in a per-connection goroutine. The application ensures that
 // there is at most one reader on a connection by execution by executing all reads from this goroutine.
-func (c *ClientLevel1) readPump() {
+func (c *ClientLevel2) readPump() {
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
@@ -69,6 +50,7 @@ func (c *ClientLevel1) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		// Switch Case: Process Business. Here simple broadcast message to all client in hub.
 		c.hub.broadcast <- message
 	}
 }
@@ -77,7 +59,7 @@ func (c *ClientLevel1) readPump() {
 //
 // A goroutine running writePump is started for each connection. The application ensures that
 // there is at most one write to a connection by executing all writes from this goroutine.
-func (c *ClientLevel1) writePump() {
+func (c *ClientLevel2) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
@@ -118,19 +100,67 @@ func (c *ClientLevel1) writePump() {
 	}
 }
 
-// serveWsLevel1 handles websocket requests from the peer.
-func serveWsLevel1(symbol string, hub *HubLevel1, w http.ResponseWriter, r *http.Request) {
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+// respMsg is send message to the current websocket message.
+func (c *ClientLevel2) respMsg(message string) {
+	util.TCF{
+		Try: func() {
+			if len(message) > 0 {
+				c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+				w, err := c.conn.NextWriter(websocket.TextMessage)
+				if err != nil {
+					return
+				}
+				w.Write([]byte(message))
 
-	client := &ClientLevel1{symbol: symbol, hub: hub, conn: conn, send: make(chan []byte, 256)}
-	client.hub.register <- client
+				// Add queued chat messages to the current websocket message.
+				n := len(c.send)
+				for i := 0; i < n; i++ {
+					w.Write(newline)
+					w.Write(<-c.send)
+				}
 
-	// Allow collection of memory referenced by the caller by doing all work in new goroutines.
-	go client.writePump()
-	go client.readPump()
+				if err := w.Close(); err != nil {
+					return
+				}
+			}
+		},
+		Catch: func(e util.Exception) {
+			fmt.Printf("ClientLevel2.respMsg Caught %v\n", e)
+		},
+		Finally: func() {
+			//fmt.Println("Finally...")
+		},
+	}.Do()
+}
+
+// serveWsLevel2 handles websocket requests from the peer.
+func serveWsLevel2(symbol string, typetime string, hub *HubLevel2, w http.ResponseWriter, r *http.Request) {
+	util.TCF{
+		Try: func() {
+			upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+			conn, err := upgrader.Upgrade(w, r, nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			client := &ClientLevel2{symbol: symbol, typeTime: typetime, hub: hub, conn: conn, send: make(chan []byte, 256)}
+			client.hub.register <- client
+
+			// Allow collection of memory referenced by the caller by doing all work in new goroutines.
+			go client.writePump()
+			go client.readPump()
+
+			// Push message connected successfully.
+			msgsc := `{"err":0,"msg":"Connected sucessfully"}`
+			log.Println(msgsc)
+			client.respMsg(msgsc)
+		},
+		Catch: func(e util.Exception) {
+			fmt.Printf("serveWsLevel2 Caught %v\n", e)
+		},
+		Finally: func() {
+			//fmt.Println("Finally...")
+		},
+	}.Do()
 }
