@@ -7,7 +7,6 @@ import (
 	"ntc-gwss/conf"
 	"ntc-gwss/wss"
 	"os"
-	"strings"
 )
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
@@ -15,37 +14,6 @@ var addr = flag.String("addr", "localhost:8080", "http service address")
 //// Declare Global
 var dpwss *wss.DPWSServer
 var cswss *wss.CSWSServer
-
-func InitMapSymbol() {
-	c := config.GetConfig()
-	listpair := c.GetString("market.listpair")
-	log.Printf("=========== listpair: %s", listpair)
-
-	//var listpair = "ETH_BTC;KNOW_BTC;KNOW_ETH"
-	var arrSymbol = strings.Split(listpair, ";")
-	// log.Printf("arrSymbol: ", arrSymbol)
-	for i := range arrSymbol {
-		symbol := arrSymbol[i]
-		wss.MapSymbol[symbol] = symbol
-	}
-	log.Printf("=========== MapSymbol: ", wss.MapSymbol)
-}
-
-func ReloadMapSymbol(listpair string) {
-	log.Printf("=========== reloadMapSymbol.listpair: %s", listpair)
-	if listpair != "" {
-		var arrSymbol = strings.Split(listpair, ";")
-		// log.Printf("arrSymbol: ", arrSymbol)
-		for i := range arrSymbol {
-			symbol := arrSymbol[i]
-			//// If not exist, add to MapSymbol
-			if _, ok := wss.MapSymbol[symbol]; !ok {
-				wss.MapSymbol[symbol] = symbol
-			}
-		}
-		log.Printf("=========== reloadMapSymbol.MapSymbol: ", wss.MapSymbol)
-	}
-}
 
 func main() {
 	finish := make(chan bool)
@@ -61,7 +29,7 @@ func main() {
 	config.Init(*environment)
 
 	//// initMapSymbol
-	InitMapSymbol()
+	wss.InitMapSymbol()
 
 	// // NewWSServer
 	// go wss.NewWSServer("ntc")
