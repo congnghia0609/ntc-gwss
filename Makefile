@@ -9,6 +9,10 @@ build:
 run: build
 	@./$(NAME) -e development
 
+.PHONY: run-test
+run-test: build
+	@./$(NAME) -e test
+
 .PHONY: run-prod
 run-prod: build
 	@./$(NAME) -e production

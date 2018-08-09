@@ -28,7 +28,7 @@ func serveHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func NewWSServer(name string) *WSServer {
-	c := config.GetConfig()
+	c := conf.GetConfig()
 
 	hub := newHub()
 	go hub.run()

@@ -15,6 +15,12 @@ type DPWSServer struct {
 	hub  *HubLevel1
 }
 
+var mapInstanceDP = make(map[string]*DPWSServer)
+
+func GetInstanceDP(name string) *DPWSServer {
+	return mapInstanceDP[name]
+}
+
 func (wss *DPWSServer) GetName() string {
 	return wss.name
 }
@@ -26,11 +32,13 @@ func (wss *DPWSServer) GetHub() *HubLevel1 {
 func NewDPWSServer(name string) *DPWSServer {
 	hub := newHubLevel1()
 	go hub.run()
-	return &DPWSServer{name: name, hub: hub}
+	instance := &DPWSServer{name: name, hub: hub}
+	mapInstanceDP[name] = instance
+	return instance
 }
 
 func (wss *DPWSServer) Start() {
-	c := config.GetConfig()
+	c := conf.GetConfig()
 
 	// NewServeMux
 	httpsm := http.NewServeMux()
@@ -53,8 +61,8 @@ func (wss *DPWSServer) Start() {
 	httpsm.Handle("/", rt)
 
 	address := c.GetString(wss.name+".wss.host") + ":" + c.GetString(wss.name+".wss.port")
-	log.Printf("WSServer is running on: %s", address)
-	log.Printf("======= DPWSServer[%s] is running...", wss.name)
+	// log.Printf("WSServer is running on: %s", address)
+	log.Printf("======= DPWSServer[%s] is running on: %s", wss.name, address)
 	err := http.ListenAndServe(address, httpsm)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

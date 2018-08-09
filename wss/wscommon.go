@@ -51,8 +51,13 @@ var TypeTime = map[string]string{
 	"1w":  "1w",
 }
 
+const (
+	NameDPWSS = "depthprice"
+	NameCSWSS = "candlesticks"
+)
+
 func InitMapSymbol() {
-	c := config.GetConfig()
+	c := conf.GetConfig()
 	listpair := c.GetString("market.listpair")
 	log.Printf("=========== listpair: %s", listpair)
 

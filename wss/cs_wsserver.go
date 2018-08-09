@@ -15,6 +15,12 @@ type CSWSServer struct {
 	hub  *HubLevel2
 }
 
+var mapInstanceCS = make(map[string]*CSWSServer)
+
+func GetInstanceCS(name string) *CSWSServer {
+	return mapInstanceCS[name]
+}
+
 func (wss *CSWSServer) GetName() string {
 	return wss.name
 }
@@ -26,11 +32,13 @@ func (wss *CSWSServer) GetHub() *HubLevel2 {
 func NewCSWSServer(name string) *CSWSServer {
 	hub := newHubLevel2()
 	go hub.run()
-	return &CSWSServer{name: name, hub: hub}
+	instance := &CSWSServer{name: name, hub: hub}
+	mapInstanceCS[name] = instance
+	return instance
 }
 
 func (wss *CSWSServer) Start() {
-	c := config.GetConfig()
+	c := conf.GetConfig()
 
 	// NewServeMux
 	httpsm := http.NewServeMux()
@@ -59,8 +67,8 @@ func (wss *CSWSServer) Start() {
 	httpsm.Handle("/", rt)
 
 	address := c.GetString(wss.name+".wss.host") + ":" + c.GetString(wss.name+".wss.port")
-	log.Printf("WSServer is running on: %s", address)
-	log.Printf("======= CSWSServer[%s] is running...", wss.name)
+	// log.Printf("WSServer is running on: %s", address)
+	log.Printf("======= CSWSServer[%s] is running on: %s", wss.name, address)
 	err := http.ListenAndServe(address, httpsm)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

@@ -32,6 +32,10 @@ func newHubLevel2() *HubLevel2 {
 	}
 }
 
+func (h *HubLevel2) GetSizeClientLevel2(key string) int {
+	return len(h.clients[key])
+}
+
 func (h *HubLevel2) BroadcastMsg(msg string) {
 	util.TCF{
 		Try: func() {
