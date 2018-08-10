@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"log"
 	"net/http"
+	"ntc-gwss/util"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -90,18 +91,67 @@ func (c *Client) writePump() {
 	}
 }
 
+// respMsg is send message to the current websocket message.
+func (c *Client) respMsg(message string) {
+	util.TCF{
+		Try: func() {
+			if len(message) > 0 {
+				c.conn.SetWriteDeadline(time.Now().Add(writeWait))
+				w, err := c.conn.NextWriter(websocket.TextMessage)
+				if err != nil {
+					return
+				}
+				w.Write([]byte(message))
+
+				// Add queued chat messages to the current websocket message.
+				n := len(c.send)
+				for i := 0; i < n; i++ {
+					w.Write(newline)
+					w.Write(<-c.send)
+				}
+
+				if err := w.Close(); err != nil {
+					return
+				}
+			}
+		},
+		Catch: func(e util.Exception) {
+			log.Printf("Client.respMsg Caught %v\n", e)
+		},
+		Finally: func() {
+			//log.Println("Finally...")
+		},
+	}.Do()
+}
+
 // serveWs handles websocket requests from the peer.
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+	util.TCF{
+		Try: func() {
+			upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+			conn, err := upgrader.Upgrade(w, r, nil)
+			if err != nil {
+				log.Println(err)
+				return
+			}
 
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
-	client.hub.register <- client
+			client := &Client{hub: hub, conn: conn, send: make(chan []byte, sendBuffer)}
+			client.hub.register <- client
 
-	// Allow collection of memory referenced by the caller by doing all work in new goroutines.
-	go client.writePump()
-	go client.readPump()
+			// Allow collection of memory referenced by the caller by doing all work in new goroutines.
+			go client.writePump()
+			go client.readPump()
+
+			// Push message connected successfully.
+			msgsc := `{"err":0,"msg":"Connected sucessfully"}`
+			log.Println(msgsc)
+			client.respMsg(msgsc)
+		},
+		Catch: func(e util.Exception) {
+			log.Printf("serveWs Caught %v\n", e)
+		},
+		Finally: func() {
+			//log.Println("Finally...")
+		},
+	}.Do()
 }

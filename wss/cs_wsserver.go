@@ -68,7 +68,7 @@ func (wss *CSWSServer) Start() {
 
 	address := c.GetString(wss.name+".wss.host") + ":" + c.GetString(wss.name+".wss.port")
 	// log.Printf("WSServer is running on: %s", address)
-	log.Printf("======= CSWSServer[%s] is running on: %s", wss.name, address)
+	log.Printf("======= CSWSServer[%s] is running on host: %s", wss.name, address)
 	err := http.ListenAndServe(address, httpsm)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

@@ -3,7 +3,6 @@ package wss
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"ntc-gwss/util"
 )
@@ -64,10 +63,10 @@ func (h *HubLevel1) BroadcastMsg(msg string) {
 			}
 		},
 		Catch: func(e util.Exception) {
-			fmt.Printf("HubLevel1.broadcast Caught %v\n", e)
+			log.Printf("HubLevel1.broadcast Caught %v\n", e)
 		},
 		Finally: func() {
-			//fmt.Println("Finally...")
+			//log.Println("Finally...")
 		},
 	}.Do()
 }
@@ -88,10 +87,10 @@ func (h *HubLevel1) run() {
 					}
 				},
 				Catch: func(e util.Exception) {
-					fmt.Printf("HubLevel1.register Caught %v\n", e)
+					log.Printf("HubLevel1.register Caught %v\n", e)
 				},
 				Finally: func() {
-					//fmt.Println("Finally...")
+					//log.Println("Finally...")
 				},
 			}.Do()
 		case client := <-h.unregister:
@@ -105,10 +104,10 @@ func (h *HubLevel1) run() {
 					}
 				},
 				Catch: func(e util.Exception) {
-					fmt.Printf("HubLevel1.unregister Caught %v\n", e)
+					log.Printf("HubLevel1.unregister Caught %v\n", e)
 				},
 				Finally: func() {
-					//fmt.Println("Finally...")
+					//log.Println("Finally...")
 				},
 			}.Do()
 		case message := <-h.broadcast:
@@ -135,10 +134,10 @@ func (h *HubLevel1) run() {
 					}
 				},
 				Catch: func(e util.Exception) {
-					fmt.Printf("HubLevel1.broadcast Caught %v\n", e)
+					log.Printf("HubLevel1.broadcast Caught %v\n", e)
 				},
 				Finally: func() {
-					//fmt.Println("Finally...")
+					//log.Println("Finally...")
 				},
 			}.Do()
 		}

@@ -2,7 +2,6 @@ package wss
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/http"
 	"ntc-gwss/util"
@@ -122,10 +121,10 @@ func (c *ClientLevel1) respMsg(message string) {
 			}
 		},
 		Catch: func(e util.Exception) {
-			fmt.Printf("ClientLevel1.respMsg Caught %v\n", e)
+			log.Printf("ClientLevel1.respMsg Caught %v\n", e)
 		},
 		Finally: func() {
-			//fmt.Println("Finally...")
+			//log.Println("Finally...")
 		},
 	}.Do()
 }
@@ -141,7 +140,7 @@ func serveWsLevel1(symbol string, hub *HubLevel1, w http.ResponseWriter, r *http
 				return
 			}
 
-			client := &ClientLevel1{symbol: symbol, hub: hub, conn: conn, send: make(chan []byte, 256)}
+			client := &ClientLevel1{symbol: symbol, hub: hub, conn: conn, send: make(chan []byte, sendBuffer)}
 			client.hub.register <- client
 
 			// Allow collection of memory referenced by the caller by doing all work in new goroutines.
@@ -154,10 +153,10 @@ func serveWsLevel1(symbol string, hub *HubLevel1, w http.ResponseWriter, r *http
 			client.respMsg(msgsc)
 		},
 		Catch: func(e util.Exception) {
-			fmt.Printf("serveWsLevel1 Caught %v\n", e)
+			log.Printf("serveWsLevel1 Caught %v\n", e)
 		},
 		Finally: func() {
-			//fmt.Println("Finally...")
+			//log.Println("Finally...")
 		},
 	}.Do()
 }

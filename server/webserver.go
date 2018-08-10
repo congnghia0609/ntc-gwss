@@ -76,6 +76,13 @@ func statusHandle(w http.ResponseWriter, r *http.Request) {
 			valueDP := dpws.GetHub().GetSizeClientLevel1(sk)
 			mapData[keyDP] = fmt.Sprint(valueDP)
 		}
+		// HTWSServer
+		htws := wss.GetInstanceHT(wss.NameHTWSS)
+		if htws != nil {
+			keyHT := fmt.Sprintf("HTWSServer.clients[%s].size", sk)
+			valueHT := htws.GetHub().GetSizeClientLevel1(sk)
+			mapData[keyHT] = fmt.Sprint(valueHT)
+		}
 		// CSWSServer
 		csws := wss.GetInstanceCS(wss.NameCSWSS)
 		if csws != nil {
@@ -86,6 +93,13 @@ func statusHandle(w http.ResponseWriter, r *http.Request) {
 				mapData[keyCS] = fmt.Sprint(valueCS)
 			}
 		}
+	}
+	// TKWSServer
+	tkwss := wss.GetInstanceTK(wss.NameTKWSS)
+	if tkwss != nil {
+		keyTK := "TKWSServer.clients.size"
+		valueTK := tkwss.GetHub().GetSizeClient()
+		mapData[keyTK] = fmt.Sprint(valueTK)
 	}
 
 	// timestamp
@@ -115,7 +129,7 @@ func StartWebServer(name string) {
 	rt := mux.NewRouter()
 
 	// static resources
-	// This will serve files under http://localhost:8000/static/<filename>
+	// This will serve files under http://localhost:15901/static/<filename>
 	rt.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public/"))))
 
 	// Mapping Handlers
@@ -124,7 +138,7 @@ func StartWebServer(name string) {
 	httpsm.Handle("/", rt)
 
 	address := c.GetString(name+".host") + ":" + c.GetString(name+".port")
-	log.Printf("======= WebServer[%s] is running on: %s", name, address)
+	log.Printf("======= WebServer[%s] is running on host: %s", name, address)
 	err := http.ListenAndServe(address, httpsm)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

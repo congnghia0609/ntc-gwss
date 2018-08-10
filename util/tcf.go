@@ -32,15 +32,15 @@ func (tcf TCF) Do() {
 }
 
 ////=========== Use code template ===========////
-// TCF{
+// util.TCF{
 // 	Try: func() {
-// 		fmt.Println("I tried")
-// 		Throw("Oh,...sh...")
+// 		log.Println("I tried")
+// 		util.Throw("Oh,...sh...")
 // 	},
-// 	Catch: func(e Exception) {
-// 		fmt.Printf("Caught %v\n", e)
+// 	Catch: func(e util.Exception) {
+// 		log.Printf("Caught %v\n", e)
 // 	},
 // 	Finally: func() {
-// 		fmt.Println("Finally...")
+// 		log.Println("Finally...")
 // 	},
 // }.Do()

@@ -16,7 +16,9 @@ var addr = flag.String("addr", "localhost:8080", "http service address")
 
 //// Declare Global
 var dpwss *wss.DPWSServer
+var htwss *wss.HTWSServer
 var cswss *wss.CSWSServer
+var tkwss *wss.TKWSServer
 
 // https://github.com/natefinch/lumberjack
 func initLogger() {
@@ -42,7 +44,7 @@ func main() {
 	log.Printf("============== environment: %s", *environment)
 	conf.Init(*environment)
 
-	//// initLogger
+	//// init Logger
 	if "development" != *environment {
 		initLogger()
 	}
@@ -50,22 +52,30 @@ func main() {
 	//// initMapSymbol
 	wss.InitMapSymbol()
 
-	// // NewWSServer
-	// go wss.NewWSServer("ntc")
-
 	//// Run DPWSServer
 	dpwss = wss.NewDPWSServer(wss.NameDPWSS)
 	log.Printf("======= DPWSServer[%s] is ready...", dpwss.GetName())
 	go dpwss.Start()
+
+	//// Run HTWSServer
+	htwss = wss.NewHTWSServer(wss.NameHTWSS)
+	log.Printf("======= HTWSServer[%s] is ready...", htwss.GetName())
+	go htwss.Start()
 
 	//// Run CSWSServer
 	cswss = wss.NewCSWSServer(wss.NameCSWSS)
 	log.Printf("======= CSWSServer[%s] is ready...", cswss.GetName())
 	go cswss.Start()
 
+	//// Run TKWSServer
+	tkwss = wss.NewTKWSServer(wss.NameTKWSS)
+	log.Printf("======= TKWSServer[%s] is ready...", tkwss.GetName())
+	go tkwss.Start()
+
 	// StartWebServer
-	server.StartWebServer("webserver")
+	go server.StartWebServer("webserver")
 
 	// Hang thread Main.
 	<-finish
+	log.Println("################# End Main #################")
 }

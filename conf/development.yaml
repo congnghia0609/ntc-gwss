@@ -10,10 +10,20 @@ depthprice:
     host: 0.0.0.0
     port: 15501
 
+historytrade:
+  wss:
+    host: 0.0.0.0
+    port: 15701
+
 candlesticks:
   wss:
     host: 0.0.0.0
     port: 15601
+
+ticker24h:
+  wss:
+    host: 0.0.0.0
+    port: 15801
 
 webserver:
   host: 0.0.0.0

@@ -9,35 +9,35 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// DPWSServer class
-type DPWSServer struct {
+// HTWSServer class
+type HTWSServer struct {
 	name string
 	hub  *HubLevel1
 }
 
-var mapInstanceDP = make(map[string]*DPWSServer)
+var mapInstanceHT = make(map[string]*HTWSServer)
 
-func GetInstanceDP(name string) *DPWSServer {
-	return mapInstanceDP[name]
+func GetInstanceHT(name string) *HTWSServer {
+	return mapInstanceHT[name]
 }
 
-func (wss *DPWSServer) GetName() string {
+func (wss *HTWSServer) GetName() string {
 	return wss.name
 }
 
-func (wss *DPWSServer) GetHub() *HubLevel1 {
+func (wss *HTWSServer) GetHub() *HubLevel1 {
 	return wss.hub
 }
 
-func NewDPWSServer(name string) *DPWSServer {
+func NewHTWSServer(name string) *HTWSServer {
 	hub := newHubLevel1()
 	go hub.run()
-	instance := &DPWSServer{name: name, hub: hub}
-	mapInstanceDP[name] = instance
+	instance := &HTWSServer{name: name, hub: hub}
+	mapInstanceHT[name] = instance
 	return instance
 }
 
-func (wss *DPWSServer) Start() {
+func (wss *HTWSServer) Start() {
 	c := conf.GetConfig()
 
 	// NewServeMux
@@ -45,7 +45,7 @@ func (wss *DPWSServer) Start() {
 
 	// Setup Handlers.
 	rt := mux.NewRouter()
-	rt.HandleFunc("/ws/v1/dp/{symbol}", func(w http.ResponseWriter, r *http.Request) {
+	rt.HandleFunc("/ws/v1/ht/{symbol}", func(w http.ResponseWriter, r *http.Request) {
 		pathURI := r.RequestURI
 		log.Printf("=======pathURI: %s", pathURI)
 		vars := mux.Vars(r)
@@ -62,7 +62,7 @@ func (wss *DPWSServer) Start() {
 
 	address := c.GetString(wss.name+".wss.host") + ":" + c.GetString(wss.name+".wss.port")
 	// log.Printf("WSServer is running on: %s", address)
-	log.Printf("======= DPWSServer[%s] is running on host: %s", wss.name, address)
+	log.Printf("======= HTWSServer[%s] is running on host: %s", wss.name, address)
 	err := http.ListenAndServe(address, httpsm)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

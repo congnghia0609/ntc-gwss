@@ -21,8 +21,11 @@ const (
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
 
-	// Maximum message size allowed from peer.
-	maxMessageSize = 10240
+	// Maximum message size allowed from peer. Default: 10MB
+	maxMessageSize = 10485760
+
+	// Buffered channel send of client. Default: 10KB
+	sendBuffer = 10240
 )
 
 var (
@@ -31,8 +34,8 @@ var (
 )
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  102400,
-	WriteBufferSize: 102400,
+	ReadBufferSize:  102400, // 100 KB
+	WriteBufferSize: 102400, // 100 KB
 }
 
 // MapSymbol Const
@@ -54,6 +57,8 @@ var TypeTime = map[string]string{
 const (
 	NameDPWSS = "depthprice"
 	NameCSWSS = "candlesticks"
+	NameHTWSS = "historytrade"
+	NameTKWSS = "ticker24h"
 )
 
 func InitMapSymbol() {
