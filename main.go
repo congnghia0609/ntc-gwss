@@ -6,19 +6,29 @@ import (
 	"log"
 	"ntc-gwss/conf"
 	"ntc-gwss/server"
+	"ntc-gwss/wsc"
 	"ntc-gwss/wss"
 	"os"
+	"os/signal"
 
 	"github.com/natefinch/lumberjack"
 )
 
-var addr = flag.String("addr", "localhost:8080", "http service address")
+// var addr = flag.String("addr", "localhost:8080", "http service address")
 
 //// Declare Global
+// WSServer
 var dpwss *wss.DPWSServer
 var htwss *wss.HTWSServer
 var cswss *wss.CSWSServer
 var tkwss *wss.TKWSServer
+
+// WSClient
+var dpwsc *wsc.UWSClient
+var cswsc *wsc.UWSClient
+var htwsc *wsc.UWSClient
+var tkwsc *wsc.UWSClient
+var rswsc *wsc.UWSClient
 
 // https://github.com/natefinch/lumberjack
 func initLogger() {
@@ -32,8 +42,9 @@ func initLogger() {
 }
 
 func main() {
-	finish := make(chan bool)
+	// finish := make(chan bool)
 
+	////// -------------------- Init System -------------------- //////
 	//// init Configuration
 	environment := flag.String("e", "development", "run project with mode [-e development | test | production]")
 	flag.Usage = func() {
@@ -46,12 +57,14 @@ func main() {
 
 	//// init Logger
 	if "development" != *environment {
+		log.Printf("============== LogFile: /data/log/ntc-gwss/ntc-gwss.log")
 		initLogger()
 	}
 
 	//// initMapSymbol
 	wss.InitMapSymbol()
 
+	////// -------------------- Start WSServer -------------------- //////
 	//// Run DPWSServer
 	dpwss = wss.NewDPWSServer(wss.NameDPWSS)
 	log.Printf("======= DPWSServer[%s] is ready...", dpwss.GetName())
@@ -72,10 +85,38 @@ func main() {
 	log.Printf("======= TKWSServer[%s] is ready...", tkwss.GetName())
 	go tkwss.Start()
 
+	////// -------------------- Start WSClient -------------------- //////
+	// // DPWSClient
+	dpwsc = wsc.NewDPWSClient()
+	defer dpwsc.Close()
+	go dpwsc.StartDPWSClient()
+
+	// // CSWSClient
+	cswsc = wsc.NewCSWSClient()
+	defer cswsc.Close()
+	go cswsc.StartCSWSClient()
+
+	// // HTWSClient
+	htwsc = wsc.NewHTWSClient()
+	defer htwsc.Close()
+	go htwsc.StartHTWSClient()
+
+	// TKWSClient
+	tkwsc = wsc.NewTKWSClient()
+	defer tkwsc.Close()
+	go tkwsc.StartTKWSClient()
+
+	////// -------------------- Start WebServer -------------------- //////
 	// StartWebServer
 	go server.StartWebServer("webserver")
 
 	// Hang thread Main.
-	<-finish
+	// <-finish
+	// Hang thread Main.
+	c := make(chan os.Signal, 1)
+	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C) SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
+	signal.Notify(c, os.Interrupt)
+	// Block until we receive our signal.
+	<-c
 	log.Println("################# End Main #################")
 }

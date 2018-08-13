@@ -45,9 +45,15 @@ func (c *ClientLevel1) readPump() {
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		if len(message) > 0 {
+			message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		}
 		// Switch Case: Process Business. Here simple broadcast message to all client in hub.
-		c.hub.broadcast <- message
+		//c.hub.broadcast <- message
+
+		// Not receive message from Client. {"msg":"Message invalid","err":-1}
+		msg := `{"err":-1,"msg":"Message invalid"}`
+		c.respMsg(msg)
 	}
 }
 
@@ -101,23 +107,8 @@ func (c *ClientLevel1) respMsg(message string) {
 	util.TCF{
 		Try: func() {
 			if len(message) > 0 {
-				c.conn.SetWriteDeadline(time.Now().Add(writeWait))
-				w, err := c.conn.NextWriter(websocket.TextMessage)
-				if err != nil {
-					return
-				}
-				w.Write([]byte(message))
-
-				// Add queued chat messages to the current websocket message.
-				n := len(c.send)
-				for i := 0; i < n; i++ {
-					w.Write(newline)
-					w.Write(<-c.send)
-				}
-
-				if err := w.Close(); err != nil {
-					return
-				}
+				msg := []byte(message)
+				c.send <- msg
 			}
 		},
 		Catch: func(e util.Exception) {

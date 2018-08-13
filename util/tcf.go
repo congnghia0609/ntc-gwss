@@ -41,6 +41,6 @@ func (tcf TCF) Do() {
 // 		log.Printf("Caught %v\n", e)
 // 	},
 // 	Finally: func() {
-// 		log.Println("Finally...")
+// 		//log.Println("Finally...")
 // 	},
 // }.Do()

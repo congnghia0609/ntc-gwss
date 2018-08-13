@@ -55,7 +55,34 @@ func (h *Hub) BroadcastMsg(msg string) {
 			}
 		},
 		Catch: func(e util.Exception) {
-			log.Printf("Hub.broadcast Caught %v\n", e)
+			log.Printf("Hub.BroadcastMsg Caught %v\n", e)
+		},
+		Finally: func() {
+			//log.Println("Finally...")
+		},
+	}.Do()
+}
+
+func (h *Hub) BroadcastMsgByte(message []byte) {
+	util.TCF{
+		Try: func() {
+			if len(message) > 0 {
+				log.Printf("message: %s", message)
+				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+				if len(message) > 0 {
+					for client := range h.clients {
+						select {
+						case client.send <- message:
+						default:
+							close(client.send)
+							delete(h.clients, client)
+						}
+					}
+				}
+			}
+		},
+		Catch: func(e util.Exception) {
+			log.Printf("Hub.BroadcastMsgByte Caught %v\n", e)
 		},
 		Finally: func() {
 			//log.Println("Finally...")

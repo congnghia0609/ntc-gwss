@@ -48,7 +48,7 @@ func (h *HubLevel1) BroadcastMsg(msg string) {
 				json.Unmarshal(message, &data)
 				if data["s"] != nil {
 					symbol := data["s"].(string)
-					log.Printf("HubLevel1.broadcast.symbol=%s", symbol)
+					log.Printf("HubLevel1.BroadcastMsg.symbol=%s", symbol)
 					if len(symbol) > 0 {
 						for client := range h.clients[symbol] {
 							select {
@@ -63,7 +63,41 @@ func (h *HubLevel1) BroadcastMsg(msg string) {
 			}
 		},
 		Catch: func(e util.Exception) {
-			log.Printf("HubLevel1.broadcast Caught %v\n", e)
+			log.Printf("HubLevel1.BroadcastMsg Caught %v\n", e)
+		},
+		Finally: func() {
+			//log.Println("Finally...")
+		},
+	}.Do()
+}
+
+func (h *HubLevel1) BroadcastMsgByte(message []byte) {
+	util.TCF{
+		Try: func() {
+			if len(message) > 0 {
+				log.Printf("message: %s", message)
+				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+
+				var data map[string]interface{}
+				json.Unmarshal(message, &data)
+				if data["s"] != nil {
+					symbol := data["s"].(string)
+					log.Printf("HubLevel1.BroadcastMsgByte.symbol=%s", symbol)
+					if len(symbol) > 0 {
+						for client := range h.clients[symbol] {
+							select {
+							case client.send <- message:
+							default:
+								close(client.send)
+								delete(h.clients[symbol], client)
+							}
+						}
+					}
+				}
+			}
+		},
+		Catch: func(e util.Exception) {
+			log.Printf("HubLevel1.BroadcastMsgByte Caught %v\n", e)
 		},
 		Finally: func() {
 			//log.Println("Finally...")
