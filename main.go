@@ -101,10 +101,15 @@ func main() {
 	defer htwsc.Close()
 	go htwsc.StartHTWSClient()
 
-	// TKWSClient
+	// // TKWSClient
 	tkwsc = wsc.NewTKWSClient()
 	defer tkwsc.Close()
 	go tkwsc.StartTKWSClient()
+
+	// // ReloadSymbolWSSClient
+	rswsc = wsc.NewRSWSClient()
+	defer rswsc.Close()
+	go rswsc.StartRSWSClient()
 
 	////// -------------------- Start WebServer -------------------- //////
 	// StartWebServer

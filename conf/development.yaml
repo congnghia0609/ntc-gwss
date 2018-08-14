@@ -1,7 +1,4 @@
-ntc:
-  wss:
-    host: 0.0.0.0
-    port: 8080
+
 market:
   listpair: ETH_BTC;GTO_BTC;TRX_BTC
 
@@ -28,3 +25,7 @@ ticker24h:
 webserver:
   host: 0.0.0.0
   port: 15901
+
+dataws:
+  host: 127.0.0.1
+  port: 15401

@@ -13,6 +13,10 @@ run: build
 run-test: build
 	@./$(NAME) -e test
 
+.PHONY: run-stag
+run-stag: build
+	@./$(NAME) -e staging
+
 .PHONY: run-prod
 run-prod: build
 	@./$(NAME) -e production

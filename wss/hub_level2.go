@@ -39,7 +39,7 @@ func (h *HubLevel2) BroadcastMsg(msg string) {
 	util.TCF{
 		Try: func() {
 			if len(msg) > 0 {
-				log.Printf("message: %s", msg)
+				// log.Printf("message: %s", msg)
 
 				message := []byte(msg)
 				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
@@ -49,7 +49,7 @@ func (h *HubLevel2) BroadcastMsg(msg string) {
 				if data["s"] != nil && data["tt"] != nil {
 					symbol := data["s"].(string)
 					tt := data["tt"].(string)
-					log.Printf("HubLevel2.BroadcastMsg {symbol=%s,typeTime=%s}", symbol, tt)
+					// log.Printf("HubLevel2.BroadcastMsg {symbol=%s,typeTime=%s}", symbol, tt)
 					if len(symbol) > 0 && len(tt) > 0 {
 						key := symbol + "_" + tt
 						for client := range h.clients[key] {
@@ -77,7 +77,7 @@ func (h *HubLevel2) BroadcastMsgByte(message []byte) {
 	util.TCF{
 		Try: func() {
 			if len(message) > 0 {
-				log.Printf("message: %s", message)
+				// log.Printf("message: %s", message)
 				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 
 				var data map[string]interface{}
@@ -85,7 +85,7 @@ func (h *HubLevel2) BroadcastMsgByte(message []byte) {
 				if data["s"] != nil && data["tt"] != nil {
 					symbol := data["s"].(string)
 					tt := data["tt"].(string)
-					log.Printf("HubLevel2.BroadcastMsgByte {symbol=%s,typeTime=%s}", symbol, tt)
+					// log.Printf("HubLevel2.BroadcastMsgByte {symbol=%s,typeTime=%s}", symbol, tt)
 					if len(symbol) > 0 && len(tt) > 0 {
 						key := symbol + "_" + tt
 						for client := range h.clients[key] {

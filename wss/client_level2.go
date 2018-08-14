@@ -143,7 +143,7 @@ func serveWsLevel2(symbol string, typetime string, hub *HubLevel2, w http.Respon
 
 			// Push message connected successfully.
 			msgsc := `{"err":0,"msg":"Connected sucessfully"}`
-			log.Println(msgsc)
+			// log.Println(msgsc)
 			client.respMsg(msgsc)
 		},
 		Catch: func(e util.Exception) {

@@ -1,9 +1,12 @@
 package wsc
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"ntc-gwsc/util"
+	"ntc-gwss/conf"
+	"ntc-gwss/wss"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -22,7 +25,18 @@ func (wsc *UWSClient) recvRS() {
 					// return
 				}
 				//log.Printf("url: %s", wsc.url.String())
-				log.Printf("recv: %s", message)
+				log.Printf("recvRS: %s", message)
+				if len(message) > 0 {
+					var data map[string]interface{}
+					json.Unmarshal(message, &data)
+					if data["list_symbol"] != nil {
+						listsymbol := data["list_symbol"].(string)
+						log.Printf("======= recvRS listsymbol: %s", listsymbol)
+						if len(listsymbol) > 0 {
+							wss.ReloadMapSymbol(listsymbol)
+						}
+					}
+				}
 			}
 		},
 		Catch: func(e util.Exception) {
@@ -82,9 +96,12 @@ func (wsc *UWSClient) sendRS() {
 
 func NewRSWSClient() *UWSClient {
 	var rswsc *UWSClient
-	// var err error
-	rswsc, _ = NewInstanceWSC(NameRSWSC, "ws", "localhost:15801", "/ws/v1/tk")
-	//defer uws.Close()
+	c := conf.GetConfig()
+	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
+	log.Printf("################ RSWSClient[%s] start...", NameRSWSC)
+	// ws://e-internal-data1:15401/dataws/reloadsymbol
+	rswsc, _ = NewInstanceWSC(NameRSWSC, "ws", address, "/dataws/reloadsymbol")
+	// rswsc, _ = NewInstanceWSC(NameRSWSC, "ws", "localhost:15801", "/ws/v1/tk")
 	return rswsc
 }
 
@@ -92,5 +109,5 @@ func (tkwsc *UWSClient) StartRSWSClient() {
 	// Thread receive message.
 	go tkwsc.recvRS()
 	// Thread send message.
-	go tkwsc.sendRS()
+	// go tkwsc.sendRS()
 }

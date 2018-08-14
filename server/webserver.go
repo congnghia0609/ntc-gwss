@@ -39,6 +39,7 @@ func bToMb(b uint64) uint64 {
 	return b / 1024 / 1024
 }
 
+// http://localhost:15901/tmws/v1/status
 func statusHandle(w http.ResponseWriter, r *http.Request) {
 	pathURI := r.RequestURI
 	log.Printf("=======pathURI: %s", pathURI)
@@ -119,6 +120,42 @@ func statusHandle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// http://localhost:15901/tmws/v1/as?list_symbol=BTC_USDT%3BETH_USDT%3BKNOW_USDT%3BGTO_USDT
+func statusAddSymbol(w http.ResponseWriter, r *http.Request) {
+	mapData := make(map[string]string)
+	mapData["err"] = "-1"
+	mapData["msg"] = "Execute fail."
+
+	pathURI := r.RequestURI
+	log.Printf("=======pathURI: %s", pathURI)
+	// vars := mux.Vars(r)
+	// list_symbol := vars["list_symbol"]
+	// log.Printf("=======list_symbol: %s", list_symbol)
+
+	listsymbol := r.FormValue("list_symbol")
+	log.Printf("=======listsymbol: %s", listsymbol)
+
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if len(listsymbol) > 0 {
+		wss.ReloadMapSymbol(listsymbol)
+		mapData["err"] = "0"
+		mapData["msg"] = "Add symbol successfully."
+	}
+
+	// log.Printf("mapData: ", mapData)
+	data, _ := json.Marshal(mapData)
+	// Response.
+	if len(data) > 0 {
+		printJson(w, r, string(data))
+	} else {
+		printJson(w, r, "{}")
+	}
+}
+
 func StartWebServer(name string) {
 	c := conf.GetConfig()
 
@@ -133,8 +170,9 @@ func StartWebServer(name string) {
 	rt.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("public/"))))
 
 	// Mapping Handlers
-	rt.HandleFunc("/", homeHandle)
+	// rt.HandleFunc("/", homeHandle)
 	rt.HandleFunc("/tmws/v1/status", statusHandle)
+	rt.HandleFunc("/tmws/v1/as", statusAddSymbol)
 	httpsm.Handle("/", rt)
 
 	address := c.GetString(name+".host") + ":" + c.GetString(name+".port")

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"ntc-gwsc/util"
+	"ntc-gwss/conf"
 	"ntc-gwss/wss"
 	"time"
 
@@ -22,7 +23,7 @@ func (wsc *UWSClient) recvDP() {
 					wsc.Reconnect()
 					// return
 				}
-				log.Printf("recvDP: %s", message)
+				// log.Printf("recvDP: %s", message)
 				if len(message) > 0 {
 					// DPWSServer
 					dpws := wss.GetInstanceDP(wss.NameDPWSS)
@@ -91,11 +92,14 @@ func (wsc *UWSClient) sendDP() {
 
 func NewDPWSClient() *UWSClient {
 	var dpwsc *UWSClient
-	// var err error
+	c := conf.GetConfig()
+	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
+	log.Printf("################ DPWSClient[%s] start...", NameDPWSC)
+	// ws://e-internal-data1:15401/dataws/depth
+	dpwsc, _ = NewInstanceWSC(NameDPWSC, "ws", address, "/dataws/depth")
 	// dpwsc, _ = NewInstanceWSC(NameDPWSC, "ws", "localhost:15501", "/ws/v1/dp/ETH_BTC")
 	//wss://engine2.kryptono.exchange/ws/v1/dp/ETH_BTC
-	dpwsc, _ = NewInstanceWSC(NameDPWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/dp/ETH_BTC")
-	//defer uws.Close()
+	// dpwsc, _ = NewInstanceWSC(NameDPWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/dp/ETH_BTC")
 	return dpwsc
 }
 

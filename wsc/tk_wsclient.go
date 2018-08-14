@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"ntc-gwsc/util"
+	"ntc-gwss/conf"
 	"ntc-gwss/wss"
 	"time"
 
@@ -22,7 +23,7 @@ func (wsc *UWSClient) recvTK() {
 					wsc.Reconnect()
 					// return
 				}
-				log.Printf("recvTK: %s", message)
+				// log.Printf("recvTK: %s", message)
 				if len(message) > 0 {
 					tkwss := wss.GetInstanceTK(wss.NameTKWSS)
 					if tkwss != nil {
@@ -88,11 +89,14 @@ func (wsc *UWSClient) sendTK() {
 
 func NewTKWSClient() *UWSClient {
 	var tkwsc *UWSClient
-	// var err error
-	//tkwsc, _ = NewInstanceWSC(NameTKWSC, "ws", "localhost:15801", "/ws/v1/tk")
+	c := conf.GetConfig()
+	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
+	log.Printf("################ TKWSClient[%s] start...", NameTKWSC)
+	// ws://e-internal-data1:15401/dataws/ticker24h
+	tkwsc, _ = NewInstanceWSC(NameTKWSC, "ws", address, "/dataws/ticker24h")
+	// tkwsc, _ = NewInstanceWSC(NameTKWSC, "ws", "localhost:15801", "/ws/v1/tk")
 	// wss://engine2.kryptono.exchange/ws/v1/tk
-	tkwsc, _ = NewInstanceWSC(NameTKWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/tk")
-	//defer uws.Close()
+	// tkwsc, _ = NewInstanceWSC(NameTKWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/tk")
 	return tkwsc
 }
 

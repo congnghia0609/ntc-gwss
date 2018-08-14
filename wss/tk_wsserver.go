@@ -55,6 +55,6 @@ func (wss *TKWSServer) Start() {
 	log.Printf("======= TKWSServer[%s] is running on host: %s", wss.name, address)
 	err := http.ListenAndServe(address, httpsm)
 	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+		log.Fatal("TKWSServer ListenAndServe: ", err)
 	}
 }

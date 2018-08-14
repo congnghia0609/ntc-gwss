@@ -136,7 +136,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 			// Push message connected successfully.
 			msgsc := `{"err":0,"msg":"Connected sucessfully"}`
-			log.Println(msgsc)
+			// log.Println(msgsc)
 			client.respMsg(msgsc)
 		},
 		Catch: func(e util.Exception) {

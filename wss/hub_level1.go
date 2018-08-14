@@ -39,7 +39,7 @@ func (h *HubLevel1) BroadcastMsg(msg string) {
 	util.TCF{
 		Try: func() {
 			if len(msg) > 0 {
-				log.Printf("message: %s", msg)
+				// log.Printf("message: %s", msg)
 
 				message := []byte(msg)
 				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
@@ -48,7 +48,7 @@ func (h *HubLevel1) BroadcastMsg(msg string) {
 				json.Unmarshal(message, &data)
 				if data["s"] != nil {
 					symbol := data["s"].(string)
-					log.Printf("HubLevel1.BroadcastMsg.symbol=%s", symbol)
+					// log.Printf("HubLevel1.BroadcastMsg.symbol=%s", symbol)
 					if len(symbol) > 0 {
 						for client := range h.clients[symbol] {
 							select {
@@ -75,14 +75,14 @@ func (h *HubLevel1) BroadcastMsgByte(message []byte) {
 	util.TCF{
 		Try: func() {
 			if len(message) > 0 {
-				log.Printf("message: %s", message)
+				// log.Printf("message: %s", message)
 				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 
 				var data map[string]interface{}
 				json.Unmarshal(message, &data)
 				if data["s"] != nil {
 					symbol := data["s"].(string)
-					log.Printf("HubLevel1.BroadcastMsgByte.symbol=%s", symbol)
+					// log.Printf("HubLevel1.BroadcastMsgByte.symbol=%s", symbol)
 					if len(symbol) > 0 {
 						for client := range h.clients[symbol] {
 							select {
@@ -148,12 +148,12 @@ func (h *HubLevel1) run() {
 			util.TCF{
 				Try: func() {
 					if len(message) > 0 {
-						log.Printf("message: %s", message)
+						// log.Printf("message: %s", message)
 						var data map[string]interface{}
 						json.Unmarshal([]byte(message), &data)
 						if data["s"] != nil {
 							symbol := data["s"].(string)
-							log.Printf("HubLevel1.broadcast.symbol=%s", symbol)
+							// log.Printf("HubLevel1.broadcast.symbol=%s", symbol)
 							if len(symbol) > 0 {
 								for client := range h.clients[symbol] {
 									select {

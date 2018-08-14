@@ -61,10 +61,9 @@ func (wss *DPWSServer) Start() {
 	httpsm.Handle("/", rt)
 
 	address := c.GetString(wss.name+".wss.host") + ":" + c.GetString(wss.name+".wss.port")
-	// log.Printf("WSServer is running on: %s", address)
 	log.Printf("======= DPWSServer[%s] is running on host: %s", wss.name, address)
 	err := http.ListenAndServe(address, httpsm)
 	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+		log.Fatal("DPWSServer ListenAndServe: ", err)
 	}
 }

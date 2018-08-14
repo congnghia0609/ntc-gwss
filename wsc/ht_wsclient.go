@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"ntc-gwsc/util"
+	"ntc-gwss/conf"
 	"ntc-gwss/wss"
 	"time"
 
@@ -22,7 +23,7 @@ func (wsc *UWSClient) recvHT() {
 					wsc.Reconnect()
 					// return
 				}
-				log.Printf("recvHT: %s", message)
+				// log.Printf("recvHT: %s", message)
 				if len(message) > 0 {
 					htws := wss.GetInstanceHT(wss.NameHTWSS)
 					if htws != nil {
@@ -90,11 +91,14 @@ func (wsc *UWSClient) sendHT() {
 
 func NewHTWSClient() *UWSClient {
 	var htwsc *UWSClient
-	// var err error
+	c := conf.GetConfig()
+	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
+	log.Printf("################ HTWSClient[%s] start...", NameHTWSC)
+	// ws://e-internal-data1:15401/dataws/history
+	htwsc, _ = NewInstanceWSC(NameHTWSC, "ws", address, "/dataws/history")
 	// htwsc, _ = NewInstanceWSC(NameHTWSC, "ws", "localhost:15701", "/ws/v1/ht/ETH_BTC")
 	// wss://engine2.kryptono.exchange/ws/v1/ht/ETH_BTC
-	htwsc, _ = NewInstanceWSC(NameHTWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/ht/ETH_BTC")
-	//defer uws.Close()
+	// htwsc, _ = NewInstanceWSC(NameHTWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/ht/ETH_BTC")
 	return htwsc
 }
 
