@@ -14,8 +14,6 @@ import (
 	"github.com/natefinch/lumberjack"
 )
 
-// var addr = flag.String("addr", "localhost:8080", "http service address")
-
 //// Declare Global
 // WSServer
 var dpwss *wss.DPWSServer
@@ -34,7 +32,7 @@ var rswsc *wsc.UWSClient
 func initLogger() {
 	log.SetOutput(&lumberjack.Logger{
 		Filename:   "/data/log/ntc-gwss/ntc-gwss.log",
-		MaxSize:    10,   // megabytes. Defaults to 100 MB.
+		MaxSize:    10,   // 10 megabytes. Defaults to 100 MB.
 		MaxBackups: 3,    // maximum number of old log files to retain.
 		MaxAge:     28,   // maximum number of days to retain old log files
 		Compress:   true, // disabled by default
@@ -48,7 +46,7 @@ func main() {
 	//// init Configuration
 	environment := flag.String("e", "development", "run project with mode [-e development | test | production]")
 	flag.Usage = func() {
-		fmt.Println("Usage: [appname] -e development | test | production")
+		fmt.Println("Usage: ./[appname] -e development | test | production")
 		os.Exit(1)
 	}
 	flag.Parse()

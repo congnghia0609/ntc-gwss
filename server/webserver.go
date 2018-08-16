@@ -59,7 +59,7 @@ func statusHandle(w http.ResponseWriter, r *http.Request) {
 
 	// Memmory // For info on each, see: https://golang.org/pkg/runtime/#MemStats
 	mapData["A_Alloc"] = fmt.Sprint(bToMb(m.Alloc)) + " MB"
-	mapData["A_TotalAlloc"] = fmt.Sprint(bToMb(m.TotalAlloc)) + " MB"
+	// mapData["A_TotalAlloc"] = fmt.Sprint(bToMb(m.TotalAlloc)) + " MB"
 	mapData["A_Sys"] = fmt.Sprint(bToMb(m.Sys)) + " MB"
 	mapData["A_StackSys"] = fmt.Sprint(bToMb(m.StackSys)) + " MB"
 

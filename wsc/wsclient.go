@@ -3,7 +3,7 @@ package wsc
 import (
 	"log"
 	"net/url"
-	"ntc-gwsc/util"
+	"ntc-gwss/util"
 	"os"
 	"os/signal"
 	"time"
