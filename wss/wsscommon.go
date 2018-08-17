@@ -24,8 +24,8 @@ const (
 	// Maximum message size allowed from peer. Default: 10MB
 	maxMessageSize = 10485760
 
-	// Buffered channel send of client. Default: 10KB
-	sendBuffer = 10240
+	// Buffered channel send of client. Default: 100KB
+	sendBuffer = 102400
 )
 
 var (

@@ -27,5 +27,5 @@ webserver:
   port: 15901
 
 dataws:
-  host: e-internal-data1
+  host: 127.0.0.1
   port: 15401

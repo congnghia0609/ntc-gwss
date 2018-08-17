@@ -38,6 +38,7 @@ func (h *Hub) BroadcastMsg(msg string) {
 	util.TCF{
 		Try: func() {
 			if len(msg) > 0 {
+				TKDataCache = msg
 				// log.Printf("message: %s", msg)
 
 				message := []byte(msg)
@@ -70,6 +71,7 @@ func (h *Hub) BroadcastMsgByte(message []byte) {
 				// log.Printf("message: %s", message)
 				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 				if len(message) > 0 {
+					TKDataCache = string(message[:])
 					for client := range h.clients {
 						select {
 						case client.send <- message:

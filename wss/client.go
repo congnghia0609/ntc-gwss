@@ -116,6 +116,23 @@ func (c *Client) respMsg(message string) {
 	}.Do()
 }
 
+// respMsgByte is send message to the current websocket message.
+func (c *Client) respMsgByte(msg []byte) {
+	util.TCF{
+		Try: func() {
+			if len(msg) > 0 {
+				c.send <- msg
+			}
+		},
+		Catch: func(e util.Exception) {
+			log.Printf("Client.respMsgByte Caught %v\n", e)
+		},
+		Finally: func() {
+			//log.Println("Finally...")
+		},
+	}.Do()
+}
+
 // serveWs handles websocket requests from the peer.
 func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	util.TCF{
@@ -136,8 +153,12 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 			// Push message connected successfully.
 			msgsc := `{"err":0,"msg":"Connected sucessfully"}`
-			// log.Println(msgsc)
 			client.respMsg(msgsc)
+			// log.Printf("==============>>>>>>>>>>>>>> TKDataCache: %s", TKDataCache)
+			time.Sleep(100 * time.Millisecond)
+			if len(TKDataCache) > 0 {
+				client.respMsg(TKDataCache)
+			}
 		},
 		Catch: func(e util.Exception) {
 			log.Printf("serveWs Caught %v\n", e)

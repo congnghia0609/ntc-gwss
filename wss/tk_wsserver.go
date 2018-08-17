@@ -15,6 +15,7 @@ type TKWSServer struct {
 }
 
 var mapInstanceTK = make(map[string]*TKWSServer)
+var TKDataCache string
 
 func GetInstanceTK(name string) *TKWSServer {
 	return mapInstanceTK[name]
