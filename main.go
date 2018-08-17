@@ -46,8 +46,6 @@ func initLogger() {
 }
 
 func main() {
-	// finish := make(chan bool)
-
 	////// -------------------- Init System -------------------- //////
 	//// init Configuration
 	environment := flag.String("e", "development", "run project with mode [-e development | test | production]")
@@ -119,8 +117,6 @@ func main() {
 	// StartWebServer
 	go server.StartWebServer("webserver")
 
-	// Hang thread Main.
-	// <-finish
 	// Hang thread Main.
 	c := make(chan os.Signal, 1)
 	// We'll accept graceful shutdowns when quit via SIGINT (Ctrl+C) SIGKILL, SIGQUIT or SIGTERM (Ctrl+/) will not be caught.
