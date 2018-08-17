@@ -1,3 +1,9 @@
+/**
+ *
+ * @author nghiatc
+ * @since Aug 8, 2018
+ */
+
 package wsc
 
 import (
