@@ -79,7 +79,7 @@ func InitMapSymbol() {
 		symbol := arrSymbol[i]
 		MapSymbol[symbol] = symbol
 	}
-	log.Printf("=========== MapSymbol: ", MapSymbol)
+	log.Printf("=========== MapSymbol: %v", MapSymbol)
 }
 
 func ReloadMapSymbol(listpair string) {
@@ -94,6 +94,6 @@ func ReloadMapSymbol(listpair string) {
 				MapSymbol[symbol] = symbol
 			}
 		}
-		log.Printf("=========== reloadMapSymbol.MapSymbol: ", MapSymbol)
+		log.Printf("=========== reloadMapSymbol.MapSymbol: %v", MapSymbol)
 	}
 }
