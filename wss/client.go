@@ -158,7 +158,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 			go client.readPump()
 
 			// Push message connected successfully.
-			msgsc := `{"err":0,"msg":"Connected sucessfully"}`
+			msgsc := `{"err":0,"msg":"Connected successfully"}`
 			client.respMsg(msgsc)
 			// log.Printf("==============>>>>>>>>>>>>>> TKDataCache: %s", TKDataCache)
 			time.Sleep(100 * time.Millisecond)

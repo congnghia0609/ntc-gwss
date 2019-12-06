@@ -145,7 +145,7 @@ func serveWsLevel1(symbol string, hub *HubLevel1, w http.ResponseWriter, r *http
 			go client.readPump()
 
 			// Push message connected successfully.
-			msgsc := `{"err":0,"msg":"Connected sucessfully"}`
+			msgsc := `{"err":0,"msg":"Connected successfully"}`
 			// log.Println(msgsc)
 			client.respMsg(msgsc)
 		},
