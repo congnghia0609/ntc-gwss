@@ -10,15 +10,19 @@ import (
 	"bytes"
 	"log"
 	"net/http"
-	"ntc-gwss/util"
 	"time"
+	"ntc-gwss/util"
 
 	"github.com/gorilla/websocket"
 )
 
-// Client is a middleman between the websocket connection and the hub.
-type Client struct {
-	hub *Hub
+// ClientCR is a middleman between the websocket connection and the hub.
+type ClientCR struct {
+	// symbol
+	symbol string
+
+	// HubCR
+	hub *HubCR
 
 	// The websocket connnection.
 	conn *websocket.Conn
@@ -31,7 +35,7 @@ type Client struct {
 //
 // The application runs readPump in a per-connection goroutine. The application ensures that
 // there is at most one reader on a connection by execution by executing all reads from this goroutine.
-func (c *Client) readPump() {
+func (c *ClientCR) readPump() {
 	defer func() {
 		c.hub.unregister <- c
 		c.conn.Close()
@@ -51,7 +55,7 @@ func (c *Client) readPump() {
 			message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		}
 		// Switch Case: Process Business. Here simple broadcast message to all client in hub.
-		// c.hub.broadcast <- message
+		//c.hub.broadcast <- message
 
 		// Not receive message from Client. {"msg":"Message invalid","err":-1}
 		msg := `{"err":-1,"msg":"Message invalid"}`
@@ -63,7 +67,7 @@ func (c *Client) readPump() {
 //
 // A goroutine running writePump is started for each connection. The application ensures that
 // there is at most one write to a connection by executing all writes from this goroutine.
-func (c *Client) writePump() {
+func (c *ClientCR) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
@@ -105,7 +109,7 @@ func (c *Client) writePump() {
 }
 
 // respMsg is send message to the current websocket message.
-func (c *Client) respMsg(message string) {
+func (c *ClientCR) respMsg(message string) {
 	util.TCF{
 		Try: func() {
 			if len(message) > 0 {
@@ -114,7 +118,7 @@ func (c *Client) respMsg(message string) {
 			}
 		},
 		Catch: func(e util.Exception) {
-			log.Printf("Client.respMsg Caught %v\n", e)
+			log.Printf("ClientCR.respMsg Caught %v\n", e)
 		},
 		Finally: func() {
 			//log.Println("Finally...")
@@ -122,25 +126,8 @@ func (c *Client) respMsg(message string) {
 	}.Do()
 }
 
-// respMsgByte is send message to the current websocket message.
-func (c *Client) respMsgByte(msg []byte) {
-	util.TCF{
-		Try: func() {
-			if len(msg) > 0 {
-				c.send <- msg
-			}
-		},
-		Catch: func(e util.Exception) {
-			log.Printf("Client.respMsgByte Caught %v\n", e)
-		},
-		Finally: func() {
-			//log.Println("Finally...")
-		},
-	}.Do()
-}
-
-// serveWs handles websocket requests from the peer.
-func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
+// serveWsCR handles websocket requests from the peer.
+func serveWsCR(symbol string, hub *HubCR, w http.ResponseWriter, r *http.Request) {
 	util.TCF{
 		Try: func() {
 			upgrader.CheckOrigin = func(r *http.Request) bool { return true }
@@ -150,7 +137,7 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			client := &Client{hub: hub, conn: conn, send: make(chan []byte, sendBuffer)}
+			client := &ClientCR{symbol: symbol, hub: hub, conn: conn, send: make(chan []byte, sendBuffer)}
 			client.hub.register <- client
 
 			// Allow collection of memory referenced by the caller by doing all work in new goroutines.
@@ -159,15 +146,16 @@ func serveWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 			// Push message connected successfully.
 			msgsc := `{"err":0,"msg":"Connected successfully"}`
+			// log.Println(msgsc)
 			client.respMsg(msgsc)
-			// log.Printf("==============>>>>>>>>>>>>>> TKDataCache: %s", TKDataCache)
-			if len(TKDataCache) > 0 {
+			// log.Printf("==============>>>>>>>>>>>>>> TKDataCacheCR: %s", TKDataCacheCR)
+			if len(TKDataCacheCR) > 0 {
 				time.Sleep(100 * time.Millisecond)
-				client.respMsg(TKDataCache)
+				client.respMsg(TKDataCacheCR)
 			}
 		},
 		Catch: func(e util.Exception) {
-			log.Printf("serveWs Caught %v\n", e)
+			log.Printf("serveWsCR Caught %v\n", e)
 		},
 		Finally: func() {
 			//log.Println("Finally...")

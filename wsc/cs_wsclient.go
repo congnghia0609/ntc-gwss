@@ -9,10 +9,10 @@ package wsc
 import (
 	"fmt"
 	"log"
-	"ntc-gwss/conf"
 	"ntc-gwss/util"
 	"ntc-gwss/wss"
 	"time"
+	"ntc-gwss/conf"
 
 	"github.com/gorilla/websocket"
 )
@@ -58,12 +58,9 @@ func (wsc *UWSClient) sendCS() {
 				select {
 				case t := <-ticker.C:
 					//err := uws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
-
 					msec := t.UnixNano() / 1000000
-
 					///// 1. Candlesticks Data.
 					data := `{"tt":"1h","s":"ETH_BTC","t":` + fmt.Sprint(msec) + `,"e":"kline","k":{"c":"0.00028022","t":1533715200000,"v":"905062.00000000","h":"0.00028252","l":"0.00027787","o":"0.00027919"}}`
-
 					err := wsc.conn.WriteMessage(websocket.TextMessage, []byte(data))
 					if err != nil {
 						log.Println("write:", err)

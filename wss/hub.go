@@ -44,21 +44,9 @@ func (h *Hub) BroadcastMsg(msg string) {
 	util.TCF{
 		Try: func() {
 			if len(msg) > 0 {
-				TKDataCache = msg
 				// log.Printf("message: %s", msg)
-
 				message := []byte(msg)
-				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-				if len(message) > 0 {
-					for client := range h.clients {
-						select {
-						case client.send <- message:
-						default:
-							close(client.send)
-							delete(h.clients, client)
-						}
-					}
-				}
+				h.BroadcastMsgByte(message)
 			}
 		},
 		Catch: func(e util.Exception) {
@@ -77,15 +65,7 @@ func (h *Hub) BroadcastMsgByte(message []byte) {
 				// log.Printf("message: %s", message)
 				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 				if len(message) > 0 {
-					TKDataCache = string(message[:])
-					for client := range h.clients {
-						select {
-						case client.send <- message:
-						default:
-							close(client.send)
-							delete(h.clients, client)
-						}
-					}
+					h.broadcast <- message
 				}
 			}
 		},
@@ -136,6 +116,7 @@ func (h *Hub) run() {
 			util.TCF{
 				Try: func() {
 					if len(message) > 0 {
+						TKDataCache = string(message[:])
 						// log.Printf("message: %s", message)
 						for client := range h.clients {
 							select {

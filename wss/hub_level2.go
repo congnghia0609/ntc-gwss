@@ -46,28 +46,8 @@ func (h *HubLevel2) BroadcastMsg(msg string) {
 		Try: func() {
 			if len(msg) > 0 {
 				// log.Printf("message: %s", msg)
-
 				message := []byte(msg)
-				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-
-				var data map[string]interface{}
-				json.Unmarshal(message, &data)
-				if data["s"] != nil && data["tt"] != nil {
-					symbol := data["s"].(string)
-					tt := data["tt"].(string)
-					// log.Printf("HubLevel2.BroadcastMsg {symbol=%s,typeTime=%s}", symbol, tt)
-					if len(symbol) > 0 && len(tt) > 0 {
-						key := symbol + "_" + tt
-						for client := range h.clients[key] {
-							select {
-							case client.send <- message:
-							default:
-								close(client.send)
-								delete(h.clients[key], client)
-							}
-						}
-					}
-				}
+				h.BroadcastMsgByte(message)
 			}
 		},
 		Catch: func(e util.Exception) {
@@ -85,25 +65,28 @@ func (h *HubLevel2) BroadcastMsgByte(message []byte) {
 			if len(message) > 0 {
 				// log.Printf("message: %s", message)
 				message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-
-				var data map[string]interface{}
-				json.Unmarshal(message, &data)
-				if data["s"] != nil && data["tt"] != nil {
-					symbol := data["s"].(string)
-					tt := data["tt"].(string)
-					// log.Printf("HubLevel2.BroadcastMsgByte {symbol=%s,typeTime=%s}", symbol, tt)
-					if len(symbol) > 0 && len(tt) > 0 {
-						key := symbol + "_" + tt
-						for client := range h.clients[key] {
-							select {
-							case client.send <- message:
-							default:
-								close(client.send)
-								delete(h.clients[key], client)
-							}
-						}
-					}
+				if len(message) > 0 {
+					h.broadcast <- message
 				}
+
+				//var data map[string]interface{}
+				//json.Unmarshal(message, &data)
+				//if data["s"] != nil && data["tt"] != nil {
+				//	symbol := data["s"].(string)
+				//	tt := data["tt"].(string)
+				//	// log.Printf("HubLevel2.BroadcastMsgByte {symbol=%s,typeTime=%s}", symbol, tt)
+				//	if len(symbol) > 0 && len(tt) > 0 {
+				//		key := symbol + "_" + tt
+				//		for client := range h.clients[key] {
+				//			select {
+				//			case client.send <- message:
+				//			default:
+				//				close(client.send)
+				//				delete(h.clients[key], client)
+				//			}
+				//		}
+				//	}
+				//}
 			}
 		},
 		Catch: func(e util.Exception) {

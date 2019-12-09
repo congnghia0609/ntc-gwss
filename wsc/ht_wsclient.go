@@ -57,12 +57,9 @@ func (wsc *UWSClient) sendHT() {
 				select {
 				case t := <-ticker.C:
 					//err := uws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
-
 					msec := t.UnixNano() / 1000000
-
 					///// 1. Historytrade Data.
 					data := `{"p":"0.05567000","q":"1.84100000","c":1533886283334,"s":"ETH_BTC","t":` + fmt.Sprint(msec) + `,"e":"history_trade","k":514102,"m":true}`
-
 					err := wsc.conn.WriteMessage(websocket.TextMessage, []byte(data))
 					if err != nil {
 						log.Println("write:", err)

@@ -12,4 +12,5 @@ const (
 	NameHTWSC = "historytradeclient"
 	NameTKWSC = "ticker24hclient"
 	NameRSWSC = "reloadsymbolclient"
+	NameCRWSC = "cerberusclient"
 )

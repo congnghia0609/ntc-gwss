@@ -73,6 +73,7 @@ func statusHandle(w http.ResponseWriter, r *http.Request) {
 	// mapMarketName, _ := json.Marshal(wss.MapSymbol)
 	mapData["B_mapMarketName"] = fmt.Sprint(wss.MapSymbol)
 
+	mapTT := make(map[string]int)
 	// Count client
 	for sk := range wss.MapSymbol {
 		// log.Printf("SKey=%s, SValue=%s", sk, sv)
@@ -95,18 +96,35 @@ func statusHandle(w http.ResponseWriter, r *http.Request) {
 		if csws != nil {
 			for tk := range wss.TypeTime {
 				key := sk + "_" + tk
-				keyCS := fmt.Sprintf("CSWSServer.clients[%s].size", key)
+				// keyCS := fmt.Sprintf("CSWSServer.clients[%s].size", key)
 				valueCS := csws.GetHub().GetSizeClientLevel2(key)
-				mapData[keyCS] = fmt.Sprint(valueCS)
+				// mapData[keyCS] = fmt.Sprint(valueCS)
+				if _, ok := mapTT[tk]; ok {
+					ctt := mapTT[tk] + valueCS
+					mapTT[tk] = ctt
+				} else {
+					mapTT[tk] = valueCS
+				}
 			}
 		}
 	}
+	// CSWSServer
+	mapData["StockWSSServer.mapTT"] = fmt.Sprint(mapTT)
+
 	// TKWSServer
 	tkwss := wss.GetInstanceTK(wss.NameTKWSS)
 	if tkwss != nil {
 		keyTK := "TKWSServer.clients.size"
 		valueTK := tkwss.GetHub().GetSizeClient()
 		mapData[keyTK] = fmt.Sprint(valueTK)
+	}
+
+	// CRWSServer
+	crwss := wss.GetInstanceCR(wss.NameCRWSS)
+	if crwss != nil {
+		keyCR := "ZCRWSServer.clients.size"
+		valueCR := crwss.GetHub().GetSizeClientCR()
+		mapData[keyCR] = fmt.Sprint(valueCR)
 	}
 
 	// timestamp

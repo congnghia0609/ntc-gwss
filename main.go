@@ -26,12 +26,14 @@ var dpwss *wss.DPWSServer
 var htwss *wss.HTWSServer
 var cswss *wss.CSWSServer
 var tkwss *wss.TKWSServer
+var crwss *wss.CRWSServer
 
 // WSClient
 var dpwsc *wsc.UWSClient
 var cswsc *wsc.UWSClient
 var htwsc *wsc.UWSClient
 var tkwsc *wsc.UWSClient
+var crwsc *wsc.UWSClient
 var rswsc *wsc.UWSClient
 
 // https://github.com/natefinch/lumberjack
@@ -87,6 +89,11 @@ func main() {
 	log.Printf("======= TKWSServer[%s] is ready...", tkwss.GetName())
 	go tkwss.Start()
 
+	//// Run CRWSServer
+	crwss = wss.NewCRWSServer(wss.NameCRWSS)
+	log.Printf("======= CRWSServer[%s] is ready...", crwss.GetName())
+	go crwss.Start()
+
 	////// -------------------- Start WSClient -------------------- //////
 	// // DPWSClient
 	dpwsc = wsc.NewDPWSClient()
@@ -107,6 +114,11 @@ func main() {
 	tkwsc = wsc.NewTKWSClient()
 	defer tkwsc.Close()
 	go tkwsc.StartTKWSClient()
+
+	// // CRWSClient
+	crwsc = wsc.NewCRWSClient()
+	defer crwsc.Close()
+	go crwsc.StartCRWSClient()
 
 	// // ReloadSymbolWSSClient
 	rswsc = wsc.NewRSWSClient()

@@ -24,7 +24,6 @@ func Throw(up Exception) {
 // Do block
 func (tcf TCF) Do() {
 	if tcf.Finally != nil {
-
 		defer tcf.Finally()
 	}
 	if tcf.Catch != nil {

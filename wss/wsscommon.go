@@ -65,6 +65,7 @@ const (
 	NameCSWSS = "candlesticks"
 	NameHTWSS = "historytrade"
 	NameTKWSS = "ticker24h"
+	NameCRWSS = "cerberus"
 )
 
 func InitMapSymbol() {

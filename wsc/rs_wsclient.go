@@ -63,9 +63,7 @@ func (wsc *UWSClient) sendRS() {
 				select {
 				case t := <-ticker.C:
 					//err := uws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
-
 					msec := t.UnixNano() / 1000000
-
 					///// 1. Ticker24h Data.
 					data := `{"t":` + fmt.Sprint(msec) + `,"list_symbol":"BTC_USDT;ETH_USDT;KNOW_USDT;GTO_USDT"}`
 					err := wsc.conn.WriteMessage(websocket.TextMessage, []byte(data))
