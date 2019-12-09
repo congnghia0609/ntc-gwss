@@ -1,6 +1,6 @@
 
 market:
-  listpair: ETH_BTC;GTO_BTC;TRX_BTC
+  listpair: ETH_USDT;BTC_USDT
 
 depthprice:
   wss:
