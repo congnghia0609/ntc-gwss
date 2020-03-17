@@ -97,10 +97,8 @@ func NewHTWSClient() *UWSClient {
 	c := conf.GetConfig()
 	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
 	log.Printf("################ HTWSClient[%s] start...", NameHTWSC)
-	// ws://e-internal-data1:15401/dataws/history
 	htwsc, _ = NewInstanceWSC(NameHTWSC, "ws", address, "/dataws/history")
 	// htwsc, _ = NewInstanceWSC(NameHTWSC, "ws", "localhost:15701", "/ws/v1/ht/ETH_BTC")
-	// wss://engine2.kryptono.exchange/ws/v1/ht/ETH_BTC
 	// htwsc, _ = NewInstanceWSC(NameHTWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/ht/ETH_BTC")
 	return htwsc
 }

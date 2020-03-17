@@ -96,10 +96,8 @@ func NewTKWSClient() *UWSClient {
 	c := conf.GetConfig()
 	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
 	log.Printf("################ TKWSClient[%s] start...", NameTKWSC)
-	// ws://e-internal-data1:15401/dataws/ticker24h
 	tkwsc, _ = NewInstanceWSC(NameTKWSC, "ws", address, "/dataws/ticker24h")
 	// tkwsc, _ = NewInstanceWSC(NameTKWSC, "ws", "localhost:15801", "/ws/v1/tk")
-	// wss://engine2.kryptono.exchange/ws/v1/tk
 	// tkwsc, _ = NewInstanceWSC(NameTKWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/tk")
 	return tkwsc
 }

@@ -98,10 +98,8 @@ func NewDPWSClient() *UWSClient {
 	c := conf.GetConfig()
 	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
 	log.Printf("################ DPWSClient[%s] start...", NameDPWSC)
-	// ws://e-internal-data1:15401/dataws/depth
 	dpwsc, _ = NewInstanceWSC(NameDPWSC, "ws", address, "/dataws/depth")
 	// dpwsc, _ = NewInstanceWSC(NameDPWSC, "ws", "localhost:15501", "/ws/v1/dp/ETH_BTC")
-	//wss://engine2.kryptono.exchange/ws/v1/dp/ETH_BTC
 	// dpwsc, _ = NewInstanceWSC(NameDPWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/dp/ETH_BTC")
 	return dpwsc
 }

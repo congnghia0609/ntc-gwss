@@ -103,9 +103,7 @@ func NewRSWSClient() *UWSClient {
 	c := conf.GetConfig()
 	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
 	log.Printf("################ RSWSClient[%s] start...", NameRSWSC)
-	// ws://e-internal-data1:15401/dataws/reloadsymbol
 	rswsc, _ = NewInstanceWSC(NameRSWSC, "ws", address, "/dataws/reloadsymbol")
-	// rswsc, _ = NewInstanceWSC(NameRSWSC, "ws", "localhost:15801", "/ws/v1/tk")
 	return rswsc
 }
 

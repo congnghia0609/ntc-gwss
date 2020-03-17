@@ -98,10 +98,8 @@ func NewCSWSClient() *UWSClient {
 	c := conf.GetConfig()
 	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
 	log.Printf("################ CSWSClient[%s] start...", NameCSWSC)
-	// ws://e-internal-data1:15401/dataws/stock
 	cswsc, _ = NewInstanceWSC(NameCSWSC, "ws", address, "/dataws/stock")
 	// cswsc, _ = NewInstanceWSC(NameCSWSC, "ws", "localhost:15601", "/ws/v1/cs/ETH_BTC@1h")
-	//wss://engine2.kryptono.exchange/ws/v1/cs/ETH_BTC@1m
 	// cswsc, _ = NewInstanceWSC(NameCSWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/cs/ETH_BTC@1m")
 	return cswsc
 }
