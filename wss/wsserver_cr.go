@@ -9,8 +9,8 @@ package wss
 import (
 	"log"
 	"net/http"
-	"strings"
 	"ntc-gwss/conf"
+	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -23,18 +23,22 @@ type CRWSServer struct {
 
 var mapInstanceCR = make(map[string]*CRWSServer)
 
+// GetInstanceCR get instance CR
 func GetInstanceCR(name string) *CRWSServer {
 	return mapInstanceCR[name]
 }
 
+// GetName get name
 func (wss *CRWSServer) GetName() string {
 	return wss.name
 }
 
+// GetHub get hub
 func (wss *CRWSServer) GetHub() *HubCR {
 	return wss.hub
 }
 
+// NewCRWSServer new CRWSServer
 func NewCRWSServer(name string) *CRWSServer {
 	hub := newHubCR()
 	go hub.run()
@@ -43,6 +47,7 @@ func NewCRWSServer(name string) *CRWSServer {
 	return instance
 }
 
+// Start CRWSServer
 func (wss *CRWSServer) Start() {
 	c := conf.GetConfig()
 

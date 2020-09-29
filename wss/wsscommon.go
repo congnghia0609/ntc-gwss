@@ -46,6 +46,8 @@ var upgrader = websocket.Upgrader{
 
 // MapSymbol Const
 var MapSymbol = make(map[string]string)
+
+// TypeTime type time
 var TypeTime = map[string]string{
 	"1m":  "1m",
 	"5m":  "5m",
@@ -61,13 +63,19 @@ var TypeTime = map[string]string{
 }
 
 const (
+	// NameDPWSS depthprice
 	NameDPWSS = "depthprice"
+	// NameCSWSS candlesticks
 	NameCSWSS = "candlesticks"
+	// NameHTWSS historytrade
 	NameHTWSS = "historytrade"
+	// NameTKWSS ticker24h
 	NameTKWSS = "ticker24h"
+	// NameCRWSS cerberus
 	NameCRWSS = "cerberus"
 )
 
+// InitMapSymbol init map symbol
 func InitMapSymbol() {
 	c := conf.GetConfig()
 	listpair := c.GetString("market.listpair")
@@ -83,6 +91,7 @@ func InitMapSymbol() {
 	log.Printf("=========== MapSymbol: %v", MapSymbol)
 }
 
+// ReloadMapSymbol update map symbol
 func ReloadMapSymbol(listpair string) {
 	log.Printf("=========== reloadMapSymbol.listpair: %s", listpair)
 	if listpair != "" {

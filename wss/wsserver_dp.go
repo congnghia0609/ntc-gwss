@@ -23,18 +23,22 @@ type DPWSServer struct {
 
 var mapInstanceDP = make(map[string]*DPWSServer)
 
+// GetInstanceDP get instance DP
 func GetInstanceDP(name string) *DPWSServer {
 	return mapInstanceDP[name]
 }
 
+// GetName get name
 func (wss *DPWSServer) GetName() string {
 	return wss.name
 }
 
+// GetHub get hub
 func (wss *DPWSServer) GetHub() *HubLevel1 {
 	return wss.hub
 }
 
+// NewDPWSServer new DPWSServer
 func NewDPWSServer(name string) *DPWSServer {
 	hub := newHubLevel1()
 	go hub.run()
@@ -43,6 +47,7 @@ func NewDPWSServer(name string) *DPWSServer {
 	return instance
 }
 
+// Start DPWSServer
 func (wss *DPWSServer) Start() {
 	c := conf.GetConfig()
 

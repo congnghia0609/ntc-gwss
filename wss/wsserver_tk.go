@@ -21,21 +21,29 @@ type TKWSServer struct {
 }
 
 var mapInstanceTK = make(map[string]*TKWSServer)
+
+// TKDataCache cache TKData
 var TKDataCache string
+
+// TKDataCacheCR cache TKData CR
 var TKDataCacheCR string
 
+// GetInstanceTK get instance TK
 func GetInstanceTK(name string) *TKWSServer {
 	return mapInstanceTK[name]
 }
 
+// GetName get name
 func (wss *TKWSServer) GetName() string {
 	return wss.name
 }
 
+// GetHub get hub
 func (wss *TKWSServer) GetHub() *Hub {
 	return wss.hub
 }
 
+// NewTKWSServer new TKWSServer
 func NewTKWSServer(name string) *TKWSServer {
 	hub := newHub()
 	go hub.run()
@@ -44,6 +52,7 @@ func NewTKWSServer(name string) *TKWSServer {
 	return instance
 }
 
+// Start TKWSServer
 func (wss *TKWSServer) Start() {
 	c := conf.GetConfig()
 

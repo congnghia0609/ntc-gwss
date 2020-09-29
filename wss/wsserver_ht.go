@@ -23,18 +23,22 @@ type HTWSServer struct {
 
 var mapInstanceHT = make(map[string]*HTWSServer)
 
+// GetInstanceHT get instance HT
 func GetInstanceHT(name string) *HTWSServer {
 	return mapInstanceHT[name]
 }
 
+// GetName get name
 func (wss *HTWSServer) GetName() string {
 	return wss.name
 }
 
+// GetHub get hub
 func (wss *HTWSServer) GetHub() *HubLevel1 {
 	return wss.hub
 }
 
+// NewHTWSServer new HTWSServer
 func NewHTWSServer(name string) *HTWSServer {
 	hub := newHubLevel1()
 	go hub.run()
@@ -43,6 +47,7 @@ func NewHTWSServer(name string) *HTWSServer {
 	return instance
 }
 
+// Start HTWSServer
 func (wss *HTWSServer) Start() {
 	c := conf.GetConfig()
 

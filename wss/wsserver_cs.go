@@ -23,18 +23,22 @@ type CSWSServer struct {
 
 var mapInstanceCS = make(map[string]*CSWSServer)
 
+// GetInstanceCS get instance CS
 func GetInstanceCS(name string) *CSWSServer {
 	return mapInstanceCS[name]
 }
 
+// GetName get name
 func (wss *CSWSServer) GetName() string {
 	return wss.name
 }
 
+// GetHub get hub
 func (wss *CSWSServer) GetHub() *HubLevel2 {
 	return wss.hub
 }
 
+// NewCSWSServer new CSWSServer
 func NewCSWSServer(name string) *CSWSServer {
 	hub := newHubLevel2()
 	go hub.run()
@@ -43,6 +47,7 @@ func NewCSWSServer(name string) *CSWSServer {
 	return instance
 }
 
+// Start CSWSServer
 func (wss *CSWSServer) Start() {
 	c := conf.GetConfig()
 

@@ -10,8 +10,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"log"
-	"strings"
 	"ntc-gwss/util"
+	"strings"
 )
 
 // HubCR maintain the set of active clients and broadcasts message to the client.
@@ -41,14 +41,17 @@ func newHubCR() *HubCR {
 	}
 }
 
+// GetSizeClientCR get size client CR
 func (h *HubCR) GetSizeClientCR() int {
 	return len(h.mapclient)
 }
 
+// GetSizeSymbolClientCR get size client CR belong symbol
 func (h *HubCR) GetSizeSymbolClientCR(symbol string) int {
 	return len(h.mapsymbolclient[symbol])
 }
 
+// BroadcastMsg broadcast msg string
 func (h *HubCR) BroadcastMsg(msg string) {
 	util.TCF{
 		Try: func() {
@@ -67,6 +70,7 @@ func (h *HubCR) BroadcastMsg(msg string) {
 	}.Do()
 }
 
+// BroadcastMsgByte broadcast msg byte
 func (h *HubCR) BroadcastMsgByte(message []byte) {
 	util.TCF{
 		Try: func() {

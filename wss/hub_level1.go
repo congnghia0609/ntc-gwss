@@ -37,10 +37,12 @@ func newHubLevel1() *HubLevel1 {
 	}
 }
 
+// GetSizeClientLevel1 get size client
 func (h *HubLevel1) GetSizeClientLevel1(symbol string) int {
 	return len(h.clients[symbol])
 }
 
+// BroadcastMsg broadcast msg string
 func (h *HubLevel1) BroadcastMsg(msg string) {
 	util.TCF{
 		Try: func() {
@@ -59,6 +61,7 @@ func (h *HubLevel1) BroadcastMsg(msg string) {
 	}.Do()
 }
 
+// BroadcastMsgByte broadcast msg byte
 func (h *HubLevel1) BroadcastMsgByte(message []byte) {
 	util.TCF{
 		Try: func() {

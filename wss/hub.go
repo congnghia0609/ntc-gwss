@@ -36,10 +36,12 @@ func newHub() *Hub {
 	}
 }
 
+// GetSizeClient get size client
 func (h *Hub) GetSizeClient() int {
 	return len(h.clients)
 }
 
+// BroadcastMsg broadcast msg string
 func (h *Hub) BroadcastMsg(msg string) {
 	util.TCF{
 		Try: func() {
@@ -58,6 +60,7 @@ func (h *Hub) BroadcastMsg(msg string) {
 	}.Do()
 }
 
+// BroadcastMsgByte broadcast msg byte
 func (h *Hub) BroadcastMsgByte(message []byte) {
 	util.TCF{
 		Try: func() {
