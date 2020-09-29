@@ -12,15 +12,15 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"runtime"
-	"time"
 	"ntc-gwss/conf"
 	"ntc-gwss/wss"
+	"runtime"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
-func printJson(w http.ResponseWriter, r *http.Request, data string) {
+func printJSON(w http.ResponseWriter, r *http.Request, data string) {
 	// A very simple health check.
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
@@ -138,9 +138,9 @@ func statusHandle(w http.ResponseWriter, r *http.Request) {
 	data, _ := json.Marshal(mapData)
 	// Response.
 	if len(data) > 0 {
-		printJson(w, r, string(data))
+		printJSON(w, r, string(data))
 	} else {
-		printJson(w, r, "{}")
+		printJSON(w, r, "{}")
 	}
 }
 
@@ -174,12 +174,13 @@ func statusAddSymbol(w http.ResponseWriter, r *http.Request) {
 	data, _ := json.Marshal(mapData)
 	// Response.
 	if len(data) > 0 {
-		printJson(w, r, string(data))
+		printJSON(w, r, string(data))
 	} else {
-		printJson(w, r, "{}")
+		printJSON(w, r, "{}")
 	}
 }
 
+// StartWebServer start WebServer
 func StartWebServer(name string) {
 	c := conf.GetConfig()
 
