@@ -18,7 +18,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-type UWSClient struct {
+// NWSClient struct
+type NWSClient struct {
 	name      string
 	interrupt chan os.Signal
 	done      chan struct{}
@@ -26,21 +27,21 @@ type UWSClient struct {
 	conn      *websocket.Conn
 }
 
-var mapInstanceWSC = make(map[string]*UWSClient)
+var mapInstanceWSC = make(map[string]*NWSClient)
 
-// GetInstanceWSC Singleton UWSClient
-func GetInstanceWSC(name string) *UWSClient {
-	log.Println("=================== UWSClient.GetInstanceWSC ===================")
+// GetInstanceWSC Singleton NWSClient
+func GetInstanceWSC(name string) *NWSClient {
+	log.Println("=================== NWSClient.GetInstanceWSC ===================")
 	return mapInstanceWSC[name]
 }
 
-// NewInstanceWSC new object UWSClient
-func NewInstanceWSC(name string, scheme string, host string, path string) (*UWSClient, error) {
-	var uws *UWSClient
+// NewInstanceWSC new object NWSClient
+func NewInstanceWSC(name string, scheme string, host string, path string) (*NWSClient, error) {
+	var nws *NWSClient
 	var err error
 	util.TCF{
 		Try: func() {
-			log.Println("=================== UWSClient.NewInstanceWSC ===================")
+			log.Println("=================== NWSClient.NewInstanceWSC ===================")
 			log.Printf("+++++++++ name: %s", name)
 			if len(name) <= 0 {
 				name = uuid.Must(uuid.NewV4()).String()
@@ -52,13 +53,13 @@ func NewInstanceWSC(name string, scheme string, host string, path string) (*UWSC
 			log.Printf("connecting to %s", url.String())
 			conn, _, err := websocket.DefaultDialer.Dial(url.String(), nil)
 
-			uws = &UWSClient{name: name, interrupt: interrupt, done: done, url: url, conn: conn}
+			nws = &NWSClient{name: name, interrupt: interrupt, done: done, url: url, conn: conn}
 
 			if err != nil {
 				log.Println("[xxxxxx] ERROR:", err)
 				//log.Fatal("dial:", err)
 			}
-			mapInstanceWSC[name] = uws
+			mapInstanceWSC[name] = nws
 		},
 		Catch: func(e util.Exception) {
 			log.Printf("wsc.NewInstanceWSC Caught %v\n", e)
@@ -67,29 +68,30 @@ func NewInstanceWSC(name string, scheme string, host string, path string) (*UWSC
 			//log.Println("Finally...")
 		},
 	}.Do()
-	return uws, err
+	return nws, err
 }
 
-func (uws *UWSClient) Close() {
-	if uws.conn != nil {
-		uws.conn.Close()
+// Close NWSClient
+func (nws *NWSClient) Close() {
+	if nws.conn != nil {
+		nws.conn.Close()
 	}
 }
 
 // Reconnect is method auto-reconnect to websocket server.
-func (uws *UWSClient) Reconnect() {
+func (nws *NWSClient) Reconnect() {
 	// create ticket time for every 3 seconds
 	ticker := time.NewTicker(time.Duration(3) * time.Second)
 	var count = 1
-	for _ = range ticker.C {
-		conn, _, err := websocket.DefaultDialer.Dial(uws.url.String(), nil)
+	for range ticker.C {
+		conn, _, err := websocket.DefaultDialer.Dial(nws.url.String(), nil)
 		// Create new websocket
-		log.Printf("\nRetry Connect [%s]: %d times\n", uws.url.String(), count)
+		log.Printf("\nRetry Connect [%s]: %d times\n", nws.url.String(), count)
 		count = count + 1
 		if err != nil {
-			log.Printf("Dial failed [%s]: %s\n\n", uws.url.String(), err.Error())
+			log.Printf("Dial failed [%s]: %s\n\n", nws.url.String(), err.Error())
 		} else {
-			uws.conn = conn
+			nws.conn = conn
 			break
 		}
 	}

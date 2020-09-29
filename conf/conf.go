@@ -34,6 +34,7 @@ func Init(environment string) {
 	env = environment
 }
 
+// RelativePath join path
 func RelativePath(basedir string, path *string) {
 	p := *path
 	if p != "" && p[0] != '/' {
@@ -41,10 +42,12 @@ func RelativePath(basedir string, path *string) {
 	}
 }
 
+// GetConfig get config
 func GetConfig() *viper.Viper {
 	return config
 }
 
+// GetEnv get env
 func GetEnv() string {
 	return env
 }

@@ -17,7 +17,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (wsc *UWSClient) recvHT() {
+func (wsc *NWSClient) recvHT() {
 	util.TCF{
 		Try: func() {
 			defer wsc.Close()
@@ -47,7 +47,7 @@ func (wsc *UWSClient) recvHT() {
 	}.Do()
 }
 
-func (wsc *UWSClient) sendHT() {
+func (wsc *NWSClient) sendHT() {
 	util.TCF{
 		Try: func() {
 			ticker := time.NewTicker(time.Second)
@@ -56,7 +56,7 @@ func (wsc *UWSClient) sendHT() {
 			for {
 				select {
 				case t := <-ticker.C:
-					//err := uws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
+					//err := nws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
 					msec := t.UnixNano() / 1000000
 					///// 1. Historytrade Data.
 					data := `{"p":"0.05567000","q":"1.84100000","c":1533886283334,"s":"ETH_BTC","t":` + fmt.Sprint(msec) + `,"e":"history_trade","k":514102,"m":true}`
@@ -92,20 +92,25 @@ func (wsc *UWSClient) sendHT() {
 	}.Do()
 }
 
-func NewHTWSClient() *UWSClient {
-	var htwsc *UWSClient
+// NewHTWSClient new instance HTWSClient of NWSClient
+func NewHTWSClient() *NWSClient {
+	var htwsc *NWSClient
 	c := conf.GetConfig()
-	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
+	scheme := c.GetString(NameHTWSC + ".wsc.scheme")
+	address := c.GetString(NameHTWSC + ".wsc.host")
+	path := c.GetString(NameHTWSC + ".wsc.path")
 	log.Printf("################ HTWSClient[%s] start...", NameHTWSC)
-	htwsc, _ = NewInstanceWSC(NameHTWSC, "ws", address, "/dataws/history")
+	htwsc, _ = NewInstanceWSC(NameHTWSC, scheme, address, path)
+	// htwsc, _ = NewInstanceWSC(NameHTWSC, "ws", address, "/dataws/history")
 	// htwsc, _ = NewInstanceWSC(NameHTWSC, "ws", "localhost:15701", "/ws/v1/ht/ETH_BTC")
 	// htwsc, _ = NewInstanceWSC(NameHTWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/ht/ETH_BTC")
 	return htwsc
 }
 
-func (htwsc *UWSClient) StartHTWSClient() {
+// StartHTWSClient start
+func (wsc *NWSClient) StartHTWSClient() {
 	// Thread receive message.
-	go htwsc.recvHT()
+	go wsc.recvHT()
 	// Thread send message.
-	//go htwsc.sendHT()
+	//go wsc.sendHT()
 }

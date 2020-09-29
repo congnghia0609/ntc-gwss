@@ -17,7 +17,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (wsc *UWSClient) recvDP() {
+func (wsc *NWSClient) recvDP() {
 	util.TCF{
 		Try: func() {
 			defer wsc.Close()
@@ -48,7 +48,7 @@ func (wsc *UWSClient) recvDP() {
 	}.Do()
 }
 
-func (wsc *UWSClient) sendDP() {
+func (wsc *NWSClient) sendDP() {
 	util.TCF{
 		Try: func() {
 			ticker := time.NewTicker(time.Second)
@@ -57,7 +57,7 @@ func (wsc *UWSClient) sendDP() {
 			for {
 				select {
 				case t := <-ticker.C:
-					//err := uws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
+					//err := nws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
 					msec := t.UnixNano() / 1000000
 					///// 1. DepthPrice Data.
 					data := `{"a":[],"b":[["379.11400000", "0.03203000"]],"s":"ETH_BTC","t":"` + fmt.Sprint(msec) + `","e":"depthUpdate"}`
@@ -93,20 +93,25 @@ func (wsc *UWSClient) sendDP() {
 	}.Do()
 }
 
-func NewDPWSClient() *UWSClient {
-	var dpwsc *UWSClient
+// NewDPWSClient new instance of NWSClient
+func NewDPWSClient() *NWSClient {
+	var dpwsc *NWSClient
 	c := conf.GetConfig()
-	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
+	scheme := c.GetString(NameDPWSC + ".wsc.scheme")
+	address := c.GetString(NameDPWSC + ".wsc.host")
+	path := c.GetString(NameDPWSC + ".wsc.path")
 	log.Printf("################ DPWSClient[%s] start...", NameDPWSC)
-	dpwsc, _ = NewInstanceWSC(NameDPWSC, "ws", address, "/dataws/depth")
+	dpwsc, _ = NewInstanceWSC(NameDPWSC, scheme, address, path)
+	// dpwsc, _ = NewInstanceWSC(NameDPWSC, "ws", address, "/dataws/depth")
 	// dpwsc, _ = NewInstanceWSC(NameDPWSC, "ws", "localhost:15501", "/ws/v1/dp/ETH_BTC")
 	// dpwsc, _ = NewInstanceWSC(NameDPWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/dp/ETH_BTC")
 	return dpwsc
 }
 
-func (dpwsc *UWSClient) StartDPWSClient() {
+// StartDPWSClient start
+func (wsc *NWSClient) StartDPWSClient() {
 	// Thread receive message.
-	go dpwsc.recvDP()
+	go wsc.recvDP()
 	// Thread send message.
-	//go dpwsc.sendDP()
+	//go wsc.sendDP()
 }

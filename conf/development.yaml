@@ -35,3 +35,40 @@ webserver:
 dataws:
   host: 127.0.0.1
   port: 15401
+
+
+depthpriceclient:
+  wsc:
+    scheme: ws
+    host: 127.0.0.1:15401
+    path: /dataws/depth
+
+candlesticksclient:
+  wsc:
+    scheme: ws
+    host: 127.0.0.1:15401
+    path: /dataws/stock
+
+historytradeclient:
+  wsc:
+    scheme: ws
+    host: 127.0.0.1:15401
+    path: /dataws/history
+
+ticker24hclient:
+  wsc:
+    scheme: ws
+    host: 127.0.0.1:15401
+    path: /dataws/ticker24h
+
+cerberusclient:
+  wsc:
+    scheme: ws
+    host: 127.0.0.1:15401
+    path: /dataws/cerberus
+
+reloadsymbolclient:
+  wsc:
+    scheme: ws
+    host: 127.0.0.1:15401
+    path: /dataws/reloadsymbol

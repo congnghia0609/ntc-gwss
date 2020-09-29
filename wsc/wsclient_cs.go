@@ -9,15 +9,15 @@ package wsc
 import (
 	"fmt"
 	"log"
+	"ntc-gwss/conf"
 	"ntc-gwss/util"
 	"ntc-gwss/wss"
 	"time"
-	"ntc-gwss/conf"
 
 	"github.com/gorilla/websocket"
 )
 
-func (wsc *UWSClient) recvCS() {
+func (wsc *NWSClient) recvCS() {
 	util.TCF{
 		Try: func() {
 			defer wsc.Close()
@@ -48,7 +48,7 @@ func (wsc *UWSClient) recvCS() {
 	}.Do()
 }
 
-func (wsc *UWSClient) sendCS() {
+func (wsc *NWSClient) sendCS() {
 	util.TCF{
 		Try: func() {
 			ticker := time.NewTicker(time.Second)
@@ -57,7 +57,7 @@ func (wsc *UWSClient) sendCS() {
 			for {
 				select {
 				case t := <-ticker.C:
-					//err := uws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
+					//err := nws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
 					msec := t.UnixNano() / 1000000
 					///// 1. Candlesticks Data.
 					data := `{"tt":"1h","s":"ETH_BTC","t":` + fmt.Sprint(msec) + `,"e":"kline","k":{"c":"0.00028022","t":1533715200000,"v":"905062.00000000","h":"0.00028252","l":"0.00027787","o":"0.00027919"}}`
@@ -93,20 +93,25 @@ func (wsc *UWSClient) sendCS() {
 	}.Do()
 }
 
-func NewCSWSClient() *UWSClient {
-	var cswsc *UWSClient
+// NewCSWSClient new instance CSWSClient of NWSClient
+func NewCSWSClient() *NWSClient {
+	var cswsc *NWSClient
 	c := conf.GetConfig()
-	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
+	scheme := c.GetString(NameCSWSC + ".wsc.scheme")
+	address := c.GetString(NameCSWSC + ".wsc.host")
+	path := c.GetString(NameCSWSC + ".wsc.path")
 	log.Printf("################ CSWSClient[%s] start...", NameCSWSC)
-	cswsc, _ = NewInstanceWSC(NameCSWSC, "ws", address, "/dataws/stock")
+	cswsc, _ = NewInstanceWSC(NameCSWSC, scheme, address, path)
+	// cswsc, _ = NewInstanceWSC(NameCSWSC, "ws", address, "/dataws/stock")
 	// cswsc, _ = NewInstanceWSC(NameCSWSC, "ws", "localhost:15601", "/ws/v1/cs/ETH_BTC@1h")
 	// cswsc, _ = NewInstanceWSC(NameCSWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/cs/ETH_BTC@1m")
 	return cswsc
 }
 
-func (cswsc *UWSClient) StartCSWSClient() {
+// StartCSWSClient start
+func (wsc *NWSClient) StartCSWSClient() {
 	// Thread receive message.
-	go cswsc.recvCS()
+	go wsc.recvCS()
 	// Thread send message.
-	//go cswsc.sendCS()
+	//go wsc.sendCS()
 }

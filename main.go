@@ -29,12 +29,12 @@ var tkwss *wss.TKWSServer
 var crwss *wss.CRWSServer
 
 // WSClient
-var dpwsc *wsc.UWSClient
-var cswsc *wsc.UWSClient
-var htwsc *wsc.UWSClient
-var tkwsc *wsc.UWSClient
-var crwsc *wsc.UWSClient
-var rswsc *wsc.UWSClient
+var dpwsc *wsc.NWSClient
+var cswsc *wsc.NWSClient
+var htwsc *wsc.NWSClient
+var tkwsc *wsc.NWSClient
+var crwsc *wsc.NWSClient
+var rswsc *wsc.NWSClient
 
 // https://github.com/natefinch/lumberjack
 func initLogger() {

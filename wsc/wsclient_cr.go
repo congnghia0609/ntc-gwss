@@ -9,15 +9,15 @@ package wsc
 import (
 	"fmt"
 	"log"
-	"time"
 	"ntc-gwss/conf"
 	"ntc-gwss/util"
 	"ntc-gwss/wss"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-func (wsc *UWSClient) recvCR() {
+func (wsc *NWSClient) recvCR() {
 	util.TCF{
 		Try: func() {
 			defer wsc.Close()
@@ -48,7 +48,7 @@ func (wsc *UWSClient) recvCR() {
 	}.Do()
 }
 
-func (wsc *UWSClient) sendCR() {
+func (wsc *NWSClient) sendCR() {
 	util.TCF{
 		Try: func() {
 			ticker := time.NewTicker(time.Second)
@@ -57,7 +57,7 @@ func (wsc *UWSClient) sendCR() {
 			for {
 				select {
 				case t := <-ticker.C:
-					//err := uws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
+					//err := nws.conn.WriteMessage(websocket.TextMessage, []byte(t.String()))
 					msec := t.UnixNano() / 1000000
 					///// 1. DepthPrice Data.
 					data := `{"et":"dp","s":"ETH_BTC",{"a":[],"b":[["379.11400000", "0.03203000"]],"s":"ETH_BTC","t":"` + fmt.Sprint(msec) + `","e":"depthUpdate"}}`
@@ -93,20 +93,25 @@ func (wsc *UWSClient) sendCR() {
 	}.Do()
 }
 
-func NewCRWSClient() *UWSClient {
-	var crwsc *UWSClient
+// NewCRWSClient new instance CRWSClient of NWSClient
+func NewCRWSClient() *NWSClient {
+	var crwsc *NWSClient
 	c := conf.GetConfig()
-	address := c.GetString("dataws.host") + ":" + c.GetString("dataws.port")
+	scheme := c.GetString(NameCRWSC + ".wsc.scheme")
+	address := c.GetString(NameCRWSC + ".wsc.host")
+	path := c.GetString(NameCRWSC + ".wsc.path")
 	log.Printf("################ CRWSClient[%s] start...", NameCRWSC)
-	crwsc, _ = NewInstanceWSC(NameCRWSC, "ws", address, "/dataws/cerberus")
+	crwsc, _ = NewInstanceWSC(NameCRWSC, scheme, address, path)
+	// crwsc, _ = NewInstanceWSC(NameCRWSC, "ws", address, "/dataws/cerberus")
 	// crwsc, _ = NewInstanceWSC(NameCRWSC, "ws", "localhost:15501", "/ws/v1/cr/ETH_BTC")
 	// crwsc, _ = NewInstanceWSC(NameCRWSC, "wss", "engine2.kryptono.exchange", "/ws/v1/cr/ETH_BTC")
 	return crwsc
 }
 
-func (crwsc *UWSClient) StartCRWSClient() {
+// StartCRWSClient start
+func (wsc *NWSClient) StartCRWSClient() {
 	// Thread receive message.
-	go crwsc.recvCR()
+	go wsc.recvCR()
 	// Thread send message.
-	//go crwsc.sendCR()
+	//go wsc.sendCR()
 }
