@@ -37,38 +37,69 @@ dataws:
   port: 15401
 
 
+# depthpriceclient:
+#   wsc:
+#     scheme: ws
+#     host: 127.0.0.1:15401
+#     path: /dataws/depth
+
+# candlesticksclient:
+#   wsc:
+#     scheme: ws
+#     host: 127.0.0.1:15401
+#     path: /dataws/stock
+
+# historytradeclient:
+#   wsc:
+#     scheme: ws
+#     host: 127.0.0.1:15401
+#     path: /dataws/history
+
+# ticker24hclient:
+#   wsc:
+#     scheme: ws
+#     host: 127.0.0.1:15401
+#     path: /dataws/ticker24h
+
+# cerberusclient:
+#   wsc:
+#     scheme: ws
+#     host: 127.0.0.1:15401
+#     path: /dataws/cerberus
+
+# reloadsymbolclient:
+#   wsc:
+#     scheme: ws
+#     host: 127.0.0.1:15401
+#     path: /dataws/reloadsymbol
+
+
 depthpriceclient:
   wsc:
-    scheme: ws
-    host: 127.0.0.1:15401
-    path: /dataws/depth
-
-candlesticksclient:
-  wsc:
-    scheme: ws
-    host: 127.0.0.1:15401
-    path: /dataws/stock
+    scheme: wss
+    host: engine2.kryptono.exchange
+    path: /ws/v1/dp/BTC_USDT
 
 historytradeclient:
   wsc:
-    scheme: ws
-    host: 127.0.0.1:15401
-    path: /dataws/history
+    scheme: wss
+    host: engine2.kryptono.exchange
+    path: /ws/v1/ht/BTC_USDT
+
+candlesticksclient:
+  wsc:
+    scheme: wss
+    host: engine2.kryptono.exchange
+    path: /ws/v1/cs/BTC_USDT@1m
 
 ticker24hclient:
   wsc:
-    scheme: ws
-    host: 127.0.0.1:15401
-    path: /dataws/ticker24h
+    scheme: wss
+    host: engine2.kryptono.exchange
+    path: /ws/v1/tk
 
 cerberusclient:
   wsc:
-    scheme: ws
-    host: 127.0.0.1:15401
-    path: /dataws/cerberus
-
-reloadsymbolclient:
-  wsc:
-    scheme: ws
-    host: 127.0.0.1:15401
-    path: /dataws/reloadsymbol
+    scheme: wss
+    host: engine2.kryptono.exchange
+    path: /ws/v1/cr/BTC_USDT

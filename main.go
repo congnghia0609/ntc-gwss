@@ -120,10 +120,10 @@ func main() {
 	defer crwsc.Close()
 	go crwsc.StartCRWSClient()
 
-	// // ReloadSymbolWSSClient
-	rswsc = wsc.NewRSWSClient()
-	defer rswsc.Close()
-	go rswsc.StartRSWSClient()
+	// // // ReloadSymbolWSSClient
+	// rswsc = wsc.NewRSWSClient()
+	// defer rswsc.Close()
+	// go rswsc.StartRSWSClient()
 
 	////// -------------------- Start WebServer -------------------- //////
 	// StartWebServer

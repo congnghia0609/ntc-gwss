@@ -143,13 +143,13 @@ func (h *HubLevel2) run() {
 			util.TCF{
 				Try: func() {
 					if len(message) > 0 {
-						log.Printf("message: %s", message)
+						// log.Printf("message: %s", message)
 						var data map[string]interface{}
 						json.Unmarshal([]byte(message), &data)
 						if data["s"] != nil && data["tt"] != nil {
 							symbol := data["s"].(string)
 							tt := data["tt"].(string)
-							log.Printf("HubLevel2.broadcast {symbol=%s,typeTime=%s}", symbol, tt)
+							// log.Printf("HubLevel2.broadcast {symbol=%s,typeTime=%s}", symbol, tt)
 							if len(symbol) > 0 && len(tt) > 0 {
 								key := symbol + "_" + tt
 								for client := range h.clients[key] {
