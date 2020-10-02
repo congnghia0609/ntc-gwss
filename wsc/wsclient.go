@@ -91,6 +91,7 @@ func (nws *NWSClient) Reconnect() {
 		if err != nil {
 			log.Printf("Dial failed [%s]: %s\n\n", nws.url.String(), err.Error())
 		} else {
+			nws.conn.Close()
 			nws.conn = conn
 			break
 		}
