@@ -9,8 +9,8 @@ package wss
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/congnghia0609/ntc-gwss/util"
 	"log"
-	"ntc-gwss/util"
 	"strings"
 )
 

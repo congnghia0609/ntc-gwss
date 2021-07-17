@@ -7,9 +7,9 @@
 package wsc
 
 import (
+	"github.com/congnghia0609/ntc-gwss/util"
 	"log"
 	"net/url"
-	"ntc-gwss/util"
 	"os"
 	"os/signal"
 	"time"
@@ -44,7 +44,7 @@ func NewInstanceWSC(name string, scheme string, host string, path string) (*NWSC
 			log.Println("=================== NWSClient.NewInstanceWSC ===================")
 			log.Printf("+++++++++ name: %s", name)
 			if len(name) <= 0 {
-				name = uuid.Must(uuid.NewV4()).String()
+				name = uuid.NewV4().String()
 			}
 			interrupt := make(chan os.Signal, 1)
 			signal.Notify(interrupt, os.Interrupt)

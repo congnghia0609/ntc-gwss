@@ -10,7 +10,7 @@ import (
 	"bytes"
 	"log"
 	"net/http"
-	"ntc-gwss/util"
+	"github.com/congnghia0609/ntc-gwss/util"
 	"time"
 
 	"github.com/gorilla/websocket"

@@ -9,7 +9,7 @@ package wss
 import (
 	"bytes"
 	"log"
-	"ntc-gwss/util"
+	"github.com/congnghia0609/ntc-gwss/util"
 )
 
 // Hub maintain the set of active clients and broadcasts message to the client.

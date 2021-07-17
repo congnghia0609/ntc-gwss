@@ -7,8 +7,8 @@
 package wss
 
 import (
+	"github.com/congnghia0609/ntc-gwss/conf"
 	"log"
-	"ntc-gwss/conf"
 	"strings"
 	"time"
 

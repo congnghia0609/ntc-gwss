@@ -9,11 +9,11 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/congnghia0609/ntc-gwss/conf"
+	"github.com/congnghia0609/ntc-gwss/wss"
 	"io"
 	"log"
 	"net/http"
-	"ntc-gwss/conf"
-	"ntc-gwss/wss"
 	"runtime"
 	"time"
 

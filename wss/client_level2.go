@@ -8,9 +8,9 @@ package wss
 
 import (
 	"bytes"
+	"github.com/congnghia0609/ntc-gwss/util"
 	"log"
 	"net/http"
-	"ntc-gwss/util"
 	"time"
 
 	"github.com/gorilla/websocket"

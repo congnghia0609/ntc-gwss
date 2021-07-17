@@ -9,11 +9,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/congnghia0609/ntc-gwss/conf"
+	"github.com/congnghia0609/ntc-gwss/server"
+	"github.com/congnghia0609/ntc-gwss/wss"
 	"log"
-	"ntc-gwss/conf"
-	"ntc-gwss/server"
-	"ntc-gwss/wsc"
-	"ntc-gwss/wss"
 	"os"
 	"os/signal"
 
@@ -29,12 +28,12 @@ var tkwss *wss.TKWSServer
 var crwss *wss.CRWSServer
 
 // WSClient
-var dpwsc *wsc.NWSClient
-var cswsc *wsc.NWSClient
-var htwsc *wsc.NWSClient
-var tkwsc *wsc.NWSClient
-var crwsc *wsc.NWSClient
-var rswsc *wsc.NWSClient
+//var dpwsc *wsc.NWSClient
+//var cswsc *wsc.NWSClient
+//var htwsc *wsc.NWSClient
+//var tkwsc *wsc.NWSClient
+//var crwsc *wsc.NWSClient
+//var rswsc *wsc.NWSClient
 
 // https://github.com/natefinch/lumberjack
 func initLogger() {
@@ -95,30 +94,30 @@ func main() {
 	go crwss.Start()
 
 	////// -------------------- Start WSClient -------------------- //////
-	// // DPWSClient
-	dpwsc = wsc.NewDPWSClient()
-	defer dpwsc.Close()
-	go dpwsc.StartDPWSClient()
-
-	// // CSWSClient
-	cswsc = wsc.NewCSWSClient()
-	defer cswsc.Close()
-	go cswsc.StartCSWSClient()
-
-	// // HTWSClient
-	htwsc = wsc.NewHTWSClient()
-	defer htwsc.Close()
-	go htwsc.StartHTWSClient()
-
-	// // TKWSClient
-	tkwsc = wsc.NewTKWSClient()
-	defer tkwsc.Close()
-	go tkwsc.StartTKWSClient()
-
-	// // CRWSClient
-	crwsc = wsc.NewCRWSClient()
-	defer crwsc.Close()
-	go crwsc.StartCRWSClient()
+	//// // DPWSClient
+	//dpwsc = wsc.NewDPWSClient()
+	//defer dpwsc.Close()
+	//go dpwsc.StartDPWSClient()
+	//
+	//// // CSWSClient
+	//cswsc = wsc.NewCSWSClient()
+	//defer cswsc.Close()
+	//go cswsc.StartCSWSClient()
+	//
+	//// // HTWSClient
+	//htwsc = wsc.NewHTWSClient()
+	//defer htwsc.Close()
+	//go htwsc.StartHTWSClient()
+	//
+	//// // TKWSClient
+	//tkwsc = wsc.NewTKWSClient()
+	//defer tkwsc.Close()
+	//go tkwsc.StartTKWSClient()
+	//
+	//// // CRWSClient
+	//crwsc = wsc.NewCRWSClient()
+	//defer crwsc.Close()
+	//go crwsc.StartCRWSClient()
 
 	// // // ReloadSymbolWSSClient
 	// rswsc = wsc.NewRSWSClient()

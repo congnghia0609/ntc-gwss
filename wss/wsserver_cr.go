@@ -7,9 +7,9 @@
 package wss
 
 import (
+	"github.com/congnghia0609/ntc-gwss/conf"
 	"log"
 	"net/http"
-	"ntc-gwss/conf"
 	"strings"
 
 	"github.com/gorilla/mux"
