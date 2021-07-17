@@ -3,11 +3,17 @@ ntc-gwss is golang code example websocket server using library gorilla.
 
 ## Install dependencies
 ```bash
-make deps
+# Install dependencies
+#make deps
+go mod download
+
+# update go.mod file
+go mod tidy
 ```
 
 ## Build
 ```bash
+export GO111MODULE=on
 make build
 ```
 
@@ -33,3 +39,7 @@ make run-stag
 ```bash
 make run-prod
 ```
+
+
+## License
+This code is under the [Apache License v2](https://www.apache.org/licenses/LICENSE-2.0).  
