@@ -9,6 +9,10 @@ go mod download
 
 # update go.mod file
 go mod tidy
+
+# Run upgrade all library dependencies
+go get -u
+go mod tidy
 ```
 
 ## Build
